@@ -120,15 +120,15 @@
         }
 
         .input-panel { flex: 1; gap: 8px; overflow-y: auto; min-width: 300px; }
-        .list-panel-wrapper { flex: 1.2; overflow: hidden; background: #555; /* Dark background to pop the receipt */ padding: 20px; align-items: center; }
+        .list-panel-wrapper { flex: 1.2; overflow: hidden; background: #555; padding: 20px; align-items: center; }
 
         /* --- THERMAL RECEIPT STYLING --- */
         .thermal-receipt {
             background: white;
             width: 100%;
-            max-width: 380px; /* Standard receipt width look */
+            max-width: 380px; 
             padding: 15px;
-            font-family: 'Courier New', Courier, monospace; /* Monospace for realism */
+            font-family: 'Courier New', Courier, monospace; 
             font-size: 13px;
             color: #000;
             box-shadow: 0 0 15px rgba(0,0,0,0.3);
@@ -160,11 +160,7 @@
         
         .receipt-footer { text-align: center; margin-top: 20px; font-size: 11px; }
 
-        /* Action Buttons (Above Receipt) */
-        .receipt-actions {
-            width: 100%; max-width: 380px;
-            display: flex; gap: 10px; margin-bottom: 10px;
-        }
+        .receipt-actions { width: 100%; max-width: 380px; display: flex; gap: 10px; margin-bottom: 10px; }
         .btn-header { padding: 8px; flex: 1; border-radius: 4px; border: none; cursor: pointer; color: white; font-weight: bold; }
         .btn-new { background: #95a5a6; }
         .btn-save { background: #27ae60; }
@@ -176,7 +172,6 @@
         .btn { padding: 10px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; color: white; width: 100%; }
         .btn-add { background: var(--primary-color); margin-top: 5px; }
         
-        /* Camera */
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
         .btn-cam-toggle { width: 35px; height: 35px; border-radius: 50%; border: none; background: var(--primary-color); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .btn-cam-toggle.active { background: var(--danger-color); }
@@ -185,7 +180,6 @@
 
         .btn-delete { color: #000; font-weight: bold; background: none; border: none; cursor: pointer; font-size: 14px; }
 
-        /* View Management */
         .view-section { display: none; width: 100%; height: 100%; }
         .view-section.active { display: flex; }
         .placeholder-content { padding: 40px; text-align: center; color: #7f8c8d; width: 100%; }
@@ -204,32 +198,57 @@
         }
         @media (min-width: 769px) { #mobile-stats { display: none; } }
 
-        /* --- PRINT STYLES (CRITICAL FOR REALISM) --- */
+        /* --- ROBUST PRINT STYLES --- */
         @media print {
-            body * { visibility: hidden; height: 0; overflow: hidden; }
-            #printable-area, #printable-area * { visibility: visible; height: auto; overflow: visible; }
+            @page { margin: 0; size: auto; }
             
-            #printable-area {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 80mm; /* Standard Thermal Paper Width */
+            body { 
+                background: white; 
+                height: auto; 
+                overflow: visible; 
+                margin: 0; 
                 padding: 0;
-                margin: 0;
-                background: white;
-                color: black;
-                font-family: 'Courier New', Courier, monospace;
-                box-shadow: none;
             }
+
+            /* Hide everything unrelated */
+            .sidebar, .header-left, .header-stats, .overlay, 
+            .input-panel, .receipt-actions, .btn-delete, 
+            .no-print, header, .nav-link, #mobile-stats, 
+            .view-section:not(.active) { 
+                display: none !important; 
+            }
+
+            /* Reset Layout containers to block to prevent clipping */
+            .main-content, .container, .list-panel-wrapper, .view-section.active {
+                display: block !important;
+                width: 100% !important;
+                height: auto !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+                overflow: visible !important;
+                box-shadow: none !important;
+                position: static !important;
+            }
+
+            /* Make Receipt Full Width */
+            .thermal-receipt {
+                width: 100% !important;
+                max-width: 100% !important;
+                box-shadow: none !important;
+                padding: 5px !important;
+                height: auto !important;
+                overflow: visible !important;
+                margin: 0 !important;
+            }
+
+            /* Force Black Text */
+            * { color: black !important; font-family: 'Courier New', monospace !important; }
             
-            /* Hide Delete buttons when printing */
-            .btn-delete, .no-print { display: none !important; }
-            
-            /* Ensure dashed lines print */
-            .dashed-line { border-top: 1px dashed #000 !important; }
-            
-            /* Reset body for print */
-            body { background: white; margin: 0; padding: 0; }
+            /* Ensure Borders Print */
+            .dashed-line { border-top: 1px dashed black !important; }
+            .receipt-table th { border-bottom: 1px dashed black !important; }
+            .receipt-total { border-top: 1px dashed black !important; }
         }
     </style>
 </head>
