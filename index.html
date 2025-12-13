@@ -396,7 +396,7 @@
         <header>
             <div class="header-left">
                 <button class="menu-btn" onclick="toggleSidebar()"><i class="material-icons" style="font-size: 28px;">menu</i></button>
-                <h2 class="page-title" id="page-title">New Invoice</h2>
+                <h2 class="page-title" id="page-title">Invoice</h2>
             </div>
             <div class="header-stats" id="headerStats">
                 <div class="stat-item">Qty: <span class="stat-val" id="headQty">0</span></div>
@@ -562,7 +562,7 @@
             if(window.innerWidth <= 768) window.toggleSidebar();
             if(viewName !== 'billing' && billingScanner) toggleBillingCamera(); 
             if(viewName !== 'products') window.stopCamera();
-            const titles = {'billing': 'New Invoice', 'products': 'Products', 'sales': 'Sales', 'dashboard': 'Dashboard'};
+            const titles = {'billing': 'Invoice', 'products': 'Products', 'sales': 'Sales', 'dashboard': 'Dashboard'};
             document.getElementById('page-title').innerText = titles[viewName] || 'System';
         };
 
