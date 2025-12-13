@@ -15,6 +15,7 @@
             --danger-color: #c0392b;
             --warning-color: #f39c12;
             --edit-color: #2980b9;
+            --whatsapp-color: #25D366;
             --light-bg: #ecf0f1;
             --sidebar-width: 250px;
         }
@@ -27,7 +28,7 @@
             background-color: var(--light-bg);
             display: flex;
             height: 100vh;
-            overflow: hidden; /* Normal view: prevent scrolling body */
+            overflow: hidden;
         }
 
         /* --- SIDEBAR NAVIGATION --- */
@@ -183,15 +184,26 @@
         }
 
         .btn-add { background-color: var(--primary-color); color: white; margin-top: 5px; }
-        .btn-save { background-color: var(--accent-color); color: white; }
         
+        /* New Button Styles */
         .btn-header { 
-            padding: 5px 15px; 
-            font-size: 0.9rem; 
+            padding: 6px 12px; 
+            font-size: 0.85rem; 
             width: auto; 
             border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex: 1;
+            justify-content: center;
+            min-width: 40px;
         }
         .btn-new { background-color: #95a5a6; color: white; }
+        .btn-prev { background-color: #7f8c8d; color: white; }
+        .btn-save { background-color: #2980b9; color: white; }
+        .btn-whatsapp { background-color: var(--whatsapp-color); color: white; }
+        .btn-print { background-color: var(--accent-color); color: white; }
+        
         .btn-scan { background-color: #e67e22; color: white; margin-bottom: 10px; }
         .btn-stop { background-color: #c0392b; color: white; margin-bottom: 10px; display: none; }
 
@@ -262,15 +274,20 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 10px;
+            flex-direction: column; /* Changed for better button layout */
+            gap: 10px;
         }
 
-        .store-info { text-align: left; flex: 1; }
+        .store-info { text-align: left; width: 100%; }
         .store-info h2 { margin: 0; font-size: 1.3rem; color: #000; font-weight: 800; text-transform: uppercase; }
         .store-info p { margin: 2px 0; font-size: 0.85rem; color: #333; }
 
         .header-actions {
             display: flex;
             gap: 5px;
+            width: 100%;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            justify-content: flex-start;
         }
 
         .invoice-meta {
@@ -320,20 +337,26 @@
             .header-stats .stat-val { font-size: 0.9rem; }
             .header-left { gap: 10px; }
             
-            /* ADJUST TITLE TO FIT */
-            h2.page-title {
-                font-size: 1rem;
-                max-width: 90px;
-                overflow: hidden;
-            }
+            h2.page-title { font-size: 1rem; max-width: 90px; overflow: hidden; }
+            
+            /* Button adjustments for mobile */
+            .header-actions .btn-text { display: none; } /* Hide text, show icons only */
+            .btn-header { padding: 8px; }
         }
         
+        @media (min-width: 769px) {
+             .invoice-top-row { flex-direction: row; align-items: flex-start; }
+             .store-info { flex: 1; }
+             .header-actions { width: auto; }
+        }
+
         /* --- PRINT STYLES --- */
         @media print {
             body * { visibility: hidden; }
             #view-billing, #view-billing .list-panel, #view-billing .list-panel * { visibility: visible; }
             #view-billing { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; display: block !important; overflow: visible !important; height: auto !important; background: white; }
             .list-panel { width: 100% !important; height: auto !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; overflow: visible !important; position: absolute; top: 0; left: 0; background: white; }
+            /* Hide new buttons and other UI elements */
             .input-panel, .header-actions, .menu-btn, .sidebar, header, .overlay, .btn-delete { display: none !important; }
             .table-wrapper { height: auto !important; overflow: visible !important; display: block !important; }
             table { width: 100% !important; border-collapse: collapse; border: 2px solid #000; }
@@ -373,7 +396,7 @@
                 <button class="menu-btn" onclick="toggleSidebar()">
                     <i class="material-icons" style="font-size: 28px;">menu</i>
                 </button>
-                <h2 class="page-title" id="page-title">Invoice</h2>
+                <h2 class="page-title" id="page-title">New Invoice</h2>
             </div>
             
             <div class="header-stats" id="headerStats">
@@ -441,10 +464,19 @@
                         </div>
                         <div class="header-actions">
                             <button class="btn btn-header btn-new" id="btnNew" title="Clear Bill">
-                                <i class="material-icons" style="font-size:1.2rem; vertical-align:middle;">restart_alt</i> Clear
+                                <i class="material-icons">restart_alt</i> <span class="btn-text">Clear</span>
                             </button>
-                            <button class="btn btn-header btn-save" id="btnSave" title="Print Bill">
-                                <i class="material-icons" style="font-size:1.2rem; vertical-align:middle;">print</i> Print
+                            <button class="btn btn-header btn-prev" id="btnPrev" title="Load Last Bill">
+                                <i class="material-icons">history</i> <span class="btn-text">Prev</span>
+                            </button>
+                            <button class="btn btn-header btn-save" id="btnSave" title="Save Only">
+                                <i class="material-icons">save</i> <span class="btn-text">Save</span>
+                            </button>
+                            <button class="btn btn-header btn-whatsapp" id="btnWhatsapp" title="Send WhatsApp">
+                                <i class="material-icons">share</i> <span class="btn-text">WA</span>
+                            </button>
+                            <button class="btn btn-header btn-print" id="btnPrint" title="Print Bill">
+                                <i class="material-icons">print</i> <span class="btn-text">Print</span>
                             </button>
                         </div>
                     </div>
@@ -551,7 +583,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push, set, get, child, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, push, set, get, child, onValue, remove, query, limitToLast, orderByKey } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         // CONFIG
         const firebaseConfig = {
@@ -570,6 +602,7 @@
         // --- GLOBAL STATE ---
         let currentBill = [];
         let billId = Date.now().toString().slice(-6);
+        let isSaved = false; // Flag to prevent double saving
 
         // --- DOM ELEMENTS ---
         const billDateEl = document.getElementById('billDate');
@@ -585,9 +618,12 @@
         const dispCustName = document.getElementById('dispCustName');
         const dispCustPhone = document.getElementById('dispCustPhone');
 
-        const now = new Date();
-        billDateEl.innerText = now.toLocaleDateString();
-        billTimeEl.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        function updateTime() {
+            const now = new Date();
+            billDateEl.innerText = now.toLocaleDateString();
+            billTimeEl.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        updateTime();
         billNoEl.innerText = `#${billId}`;
 
         custNameInput.addEventListener('input', (e) => {
@@ -776,6 +812,7 @@
             } else {
                 currentBill.push({ name, price, qty, total: price * qty });
             }
+            isSaved = false; // Modified bill
             renderBill();
             billBarcode.value = ''; pName.value = ''; pPrice.value = ''; pQty.value = '1'; billBarcode.focus();
         };
@@ -803,14 +840,22 @@
             headQty.innerText = totalQty;
             headTotal.innerText = formattedTotal;
 
-            window.deleteItem = (idx) => { currentBill.splice(idx, 1); renderBill(); };
+            window.deleteItem = (idx) => { 
+                currentBill.splice(idx, 1); 
+                isSaved = false;
+                renderBill(); 
+            };
         }
 
-        document.getElementById('btnSave').addEventListener('click', () => {
+        // --- CORE SAVE LOGIC (Used by Save and Print) ---
+        function saveBillToDb(callback) {
             if(currentBill.length === 0) return alert("Empty Bill");
-            const btn = document.getElementById('btnSave'); btn.innerHTML = '<i class="material-icons" style="font-size:1.2rem; vertical-align:middle;">hourglass_empty</i> Saving...';
+            if(isSaved) {
+                if(callback) callback();
+                return;
+            }
+
             const total = currentBill.reduce((a, b) => a + b.total, 0);
-            
             const custName = custNameInput.value.trim();
             const custPhone = custPhoneInput.value.trim();
 
@@ -825,23 +870,86 @@
 
             set(push(ref(db, 'bills')), billData)
                 .then(() => { 
-                    window.print(); 
+                    isSaved = true;
+                    if(callback) callback();
                 })
-                .finally(() => { btn.innerHTML = '<i class="material-icons" style="font-size:1.2rem; vertical-align:middle;">print</i> Print'; });
+                .catch(err => alert("Error saving: " + err));
+        }
+
+        // --- BUTTON EVENT LISTENERS ---
+
+        // 1. SAVE Button
+        document.getElementById('btnSave').addEventListener('click', () => {
+            saveBillToDb(() => {
+                alert("Bill Saved Successfully!");
+                window.resetSystem();
+            });
+        });
+
+        // 2. PRINT Button
+        document.getElementById('btnPrint').addEventListener('click', () => {
+            saveBillToDb(() => {
+                window.print();
+            });
+        });
+
+        // 3. WHATSAPP Button
+        document.getElementById('btnWhatsapp').addEventListener('click', () => {
+            if(currentBill.length === 0) return alert("Empty Bill");
+            
+            const phone = custPhoneInput.value.trim();
+            if(!phone) return alert("Please enter Customer WhatsApp Number");
+            if(phone.length < 10) return alert("Invalid Phone Number");
+
+            let msg = `*Tirupathi Store*\nBill No: ${billId}\nDate: ${new Date().toLocaleDateString()}\n--------------------\n`;
+            
+            currentBill.forEach(item => {
+                msg += `${item.name} x ${item.qty} = ${item.total}\n`;
+            });
+            
+            const total = currentBill.reduce((a, b) => a + b.total, 0);
+            msg += `--------------------\n*Grand Total: ₹${total.toFixed(2)}*\nThank you!`;
+
+            const url = `https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        });
+
+        // 4. PREVIOUS Button (Load Last Bill)
+        document.getElementById('btnPrev').addEventListener('click', () => {
+            const q = query(ref(db, 'bills'), orderByKey(), limitToLast(1));
+            get(q).then(snapshot => {
+                if(snapshot.exists()) {
+                    const data = Object.values(snapshot.val())[0];
+                    // Load Data
+                    currentBill = data.items || [];
+                    billId = data.id; // Keep old ID for reference
+                    billNoEl.innerText = `#${billId}`;
+                    
+                    custNameInput.value = data.customerName || '';
+                    custPhoneInput.value = data.customerPhone || '';
+                    dispCustName.innerText = data.customerName || '-';
+                    dispCustPhone.innerText = data.customerPhone || '-';
+                    
+                    // Mark as saved so we don't duplicate unless modified
+                    isSaved = true; 
+                    renderBill();
+                    alert("Loaded Last Bill: #" + billId);
+                } else {
+                    alert("No previous bills found.");
+                }
+            });
         });
 
         window.resetSystem = () => {
             currentBill = []; 
             billId = Date.now().toString().slice(-6);
+            isSaved = false;
             billNoEl.innerText = `#${billId}`;
             renderBill();
             billBarcode.value = ''; pName.value = ''; pPrice.value = '';
             custNameInput.value = ''; custPhoneInput.value = '';
             dispCustName.innerText = '-'; dispCustPhone.innerText = '-';
-            
-            const now = new Date();
-            billDateEl.innerText = now.toLocaleDateString();
-            billTimeEl.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            updateTime();
         };
 
         document.getElementById('btnAdd').addEventListener('click', window.addItem);
