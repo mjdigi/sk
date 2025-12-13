@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tirupathi Store - Premium Billing</title>
+    <title>MJ SMART BILLING</title>
     
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -38,8 +38,8 @@
             padding: 0;
             background-color: var(--bg-color);
             display: flex;
-            height: 100vh; /* Default Desktop Height */
-            overflow: hidden; /* Default Desktop Scroll Lock */
+            height: 100vh;
+            overflow: hidden;
             color: var(--text-main);
         }
 
@@ -54,7 +54,7 @@
             height: 100vh;
             z-index: 1000;
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative; /* Desktop position */
+            position: relative;
         }
 
         .brand {
@@ -101,7 +101,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Desktop scroll lock */
+            overflow: hidden;
             position: relative;
             width: 100%;
         }
@@ -148,7 +148,6 @@
             border: 1px solid rgba(255,255,255,0.8);
         }
 
-        /* Desktop specific sizing */
         .input-panel { flex: 1; gap: 12px; overflow-y: auto; min-width: 320px; max-width: 400px; }
         .list-panel { flex: 2; overflow: hidden; position: relative; }
 
@@ -157,7 +156,6 @@
             margin-bottom: 5px; border-bottom: 1px solid #f1f2f6; padding-bottom: 5px;
         }
 
-        /* --- FORMS --- */
         .form-group { display: flex; flex-direction: column; margin-bottom: 8px; }
         label { font-weight: 500; margin-bottom: 6px; color: var(--text-light); font-size: 0.9rem; }
         input {
@@ -166,7 +164,6 @@
         }
         input:focus { outline: none; border-color: #667eea; background: white; }
 
-        /* --- BUTTONS --- */
         .btn {
             padding: 12px; border: none; border-radius: 12px; font-size: 15px; cursor: pointer;
             font-weight: 600; text-align: center; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -198,12 +195,36 @@
             overflow: hidden; display: none; 
         }
 
-        /* --- TABLE --- */
+        /* --- TABLE & QTY CONTROLS --- */
         .table-wrapper { flex: 1; overflow-y: auto; overflow-x: auto; margin-top: 10px; }
         table { width: 100%; border-collapse: collapse; min-width: 500px; }
         thead th { text-align: left; background: #f8f9fa; padding: 12px 15px; border-bottom: 2px solid #eee; position: sticky; top: 0; }
         tbody td { padding: 12px 15px; border-bottom: 1px solid #f9f9f9; }
         .text-right { text-align: right; }
+        
+        /* New Qty Controls */
+        .qty-control { 
+            display: flex; 
+            align-items: center; 
+            justify-content: flex-end; 
+            gap: 8px; 
+        }
+        .btn-qty { 
+            width: 28px; height: 28px; 
+            border-radius: 50%; 
+            border: 1px solid #ddd; 
+            background: #f0f2f5; 
+            color: #2d3436; 
+            font-weight: bold; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+        .btn-qty:active { background: #e2e6ea; transform: scale(0.9); }
+
         .btn-delete { color: #ff4b2b; background: none; border: none; cursor: pointer; }
         .btn-edit { background: #2980b9; color: white; border: none; padding: 5px; border-radius: 4px; cursor: pointer; margin-right: 5px;}
         .btn-delete-prod { background: #e74c3c; color: white; border: none; padding: 5px; border-radius: 4px; cursor: pointer;}
@@ -216,64 +237,22 @@
         .invoice-footer { margin-top: auto; border-top: 2px solid #f1f1f1; padding-top: 15px; }
         .total-row { display: flex; justify-content: space-between; font-size: 1.4rem; font-weight: 700; color: #11998e; background: #f1fcfc; padding: 15px; border-radius: 12px; }
 
-        /* --- MOBILE RESPONSIVE FIXES (Critical for Refresh/Reload Bar) --- */
+        /* --- MOBILE RESPONSIVE --- */
         @media (max-width: 768px) {
-            /* 1. ENABLE BODY SCROLLING */
-            body { 
-                height: auto !important; 
-                overflow-y: auto !important; 
-                display: block; 
-            }
-
-            /* 2. SIDEBAR AS OVERLAY */
-            .sidebar { 
-                position: fixed; 
-                left: -270px; 
-                top: 0;
-                height: 100%; 
-                box-shadow: 2px 0 20px rgba(0,0,0,0.5);
-            } 
+            body { height: auto !important; overflow-y: auto !important; display: block; }
+            .sidebar { position: fixed; left: -270px; top: 0; height: 100%; box-shadow: 2px 0 20px rgba(0,0,0,0.5); } 
             .sidebar.active { transform: translateX(270px); }
             .overlay.active { display: block; } 
             .menu-btn { display: block; }
-            
-            /* 3. MAIN CONTENT UNLOCK */
-            .main-content { 
-                height: auto !important; 
-                overflow: visible !important; 
-            }
-
-            /* 4. SECTIONS STACK NATURALLY (No internal scrollbar) */
-            .view-section { 
-                display: none; /* hidden if not active */
-                flex-direction: column; 
-                padding: 10px; 
-                gap: 15px; 
-                height: auto !important; 
-                overflow: visible !important; 
-            }
-            
+            .main-content { height: auto !important; overflow: visible !important; }
+            .view-section { display: none; flex-direction: column; padding: 10px; gap: 15px; height: auto !important; overflow: visible !important; }
             .view-section.active { display: flex; }
-            
-            /* 5. PANELS FULL WIDTH */
-            .input-panel, .list-panel { 
-                width: 100% !important; 
-                max-width: 100% !important; 
-                flex: none; 
-                height: auto !important; 
-                overflow: visible !important;
-            } 
-            
-            .input-panel { order: 1; } 
-            .list-panel { order: 2; }
-            
-            /* 6. HEADER & BUTTONS */
+            .input-panel, .list-panel { width: 100% !important; max-width: 100% !important; flex: none; height: auto !important; overflow: visible !important; } 
+            .input-panel { order: 1; } .list-panel { order: 2; }
             .invoice-top-row { flex-direction: column; align-items: flex-start; gap: 10px; }
             .header-actions { width: 100%; justify-content: space-between; gap: 5px; } 
             .btn-header { flex: 1; padding: 8px 5px; min-width: 0; font-size: 0.75rem; } 
             .btn-text { display: none; }
-            
-            /* 7. Ensure sticky header works on body scroll */
             header { position: sticky; top: 0; z-index: 100; }
         }
 
@@ -284,98 +263,31 @@
             .sidebar, header, .input-panel, .header-actions, .menu-btn, .overlay, .cam-controls, .btn, .btn-delete, .btn-header, #view-products, #view-sales, #view-dashboard { 
                 display: none !important; 
             }
+            
+            /* Hide the +/- buttons in print */
+            .btn-qty { display: none !important; }
 
             body, html, .main-content, .container, .view-section {
-                background: white !important;
-                width: 100% !important;
-                height: auto !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                overflow: visible !important;
-                display: block !important;
-                font-size: 12pt !important;
+                background: white !important; width: 100% !important; height: auto !important;
+                margin: 0 !important; padding: 0 !important; overflow: visible !important;
+                display: block !important; font-size: 12pt !important;
             }
 
-            #view-billing {
-                display: block !important;
-                position: relative !important;
-                width: 100% !important;
-            }
-
-            .list-panel {
-                position: static !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                box-shadow: none !important;
-                border: none !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                background: white !important;
-                color: black !important;
-            }
-
-            .invoice-header {
-                background: none !important;
-                border: none !important;
-                border-bottom: 2px solid #000 !important;
-                margin-bottom: 20px !important;
-                padding: 0 0 10px 0 !important;
-            }
+            #view-billing { display: block !important; position: relative !important; width: 100% !important; }
+            .list-panel { position: static !important; width: 100% !important; max-width: 100% !important; box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important; background: white !important; color: black !important; }
+            .invoice-header { background: none !important; border: none !important; border-bottom: 2px solid #000 !important; margin-bottom: 20px !important; padding: 0 0 10px 0 !important; }
             .invoice-top-row { margin: 0 !important; display: block !important; }
             .store-info { text-align: center !important; width: 100% !important; }
             .store-info h2 { font-size: 24px !important; color: #000 !important; margin: 0 0 5px 0 !important; text-align: center !important; }
             .store-info p { color: #333 !important; font-size: 14px !important; margin: 0 !important; text-align: center !important;}
-
-            .invoice-meta { 
-                border-top: 1px solid #ccc !important; 
-                color: #000 !important; 
-                padding-top: 10px !important; 
-                margin-top: 10px !important;
-                display: flex !important;
-                justify-content: space-between !important;
-                width: 100% !important;
-            }
-
-            .table-wrapper { 
-                overflow: visible !important; 
-                height: auto !important; 
-                margin-top: 20px !important;
-                width: 100% !important;
-            }
-            table { 
-                width: 100% !important; 
-                border-collapse: collapse !important; 
-                border: 1px solid #000 !important;
-            }
-            thead th {
-                background-color: #f0f0f0 !important;
-                color: #000 !important;
-                border: 1px solid #000 !important;
-                padding: 8px !important;
-                font-size: 11pt !important;
-            }
-            tbody td {
-                border: 1px solid #000 !important;
-                color: #000 !important;
-                padding: 8px !important;
-                font-size: 11pt !important;
-            }
+            .invoice-meta { border-top: 1px solid #ccc !important; color: #000 !important; padding-top: 10px !important; margin-top: 10px !important; display: flex !important; justify-content: space-between !important; width: 100% !important; }
+            .table-wrapper { overflow: visible !important; height: auto !important; margin-top: 20px !important; width: 100% !important; }
+            table { width: 100% !important; border-collapse: collapse !important; border: 1px solid #000 !important; }
+            thead th { background-color: #f0f0f0 !important; color: #000 !important; border: 1px solid #000 !important; padding: 8px !important; font-size: 11pt !important; }
+            tbody td { border: 1px solid #000 !important; color: #000 !important; padding: 8px !important; font-size: 11pt !important; }
             th:last-child, td:last-child { display: none !important; }
-
-            .invoice-footer {
-                border-top: 2px solid #000 !important;
-                margin-top: 20px !important;
-                padding-top: 10px !important;
-                width: 100% !important;
-            }
-            .total-row {
-                background: none !important;
-                color: #000 !important;
-                font-size: 18pt !important;
-                padding: 0 !important;
-                justify-content: flex-end !important;
-                width: 100% !important;
-            }
+            .invoice-footer { border-top: 2px solid #000 !important; margin-top: 20px !important; padding-top: 10px !important; width: 100% !important; }
+            .total-row { background: none !important; color: #000 !important; font-size: 18pt !important; padding: 0 !important; justify-content: flex-end !important; width: 100% !important; }
         }
     </style>
 </head>
@@ -676,6 +588,17 @@
             billBarcode.value = ''; pName.value = ''; pPrice.value = ''; pQty.value = '1'; billBarcode.focus();
         };
 
+        window.updateQty = (index, change) => {
+            const item = currentBill[index];
+            const newQty = item.qty + change;
+            if (newQty > 0) {
+                item.qty = newQty;
+                item.total = item.price * item.qty;
+                isSaved = false;
+                renderBill();
+            }
+        };
+
         function renderBill() {
             const tbody = document.querySelector('#billTable tbody');
             tbody.innerHTML = '';
@@ -686,9 +609,21 @@
                 finalTotal += item.total;
                 totalQty += item.qty;
                 tbody.insertAdjacentHTML('beforeend', `
-                    <tr><td>${item.name}</td><td class="text-right">₹${item.price.toFixed(2)}</td>
-                    <td class="text-right">${item.qty}</td><td class="text-right">₹${item.total.toFixed(2)}</td>
-                    <td class="text-right"><button class="btn-delete" onclick="deleteItem(${index})"><i class="material-icons" style="font-size:16px;">close</i></button></td></tr>`);
+                    <tr>
+                        <td>${item.name}</td>
+                        <td class="text-right">₹${item.price.toFixed(2)}</td>
+                        <td class="text-right">
+                            <div class="qty-control">
+                                <button class="btn-qty" onclick="updateQty(${index}, -1)">-</button>
+                                <span style="min-width: 20px; text-align: center;">${item.qty}</span>
+                                <button class="btn-qty" onclick="updateQty(${index}, 1)">+</button>
+                            </div>
+                        </td>
+                        <td class="text-right">₹${item.total.toFixed(2)}</td>
+                        <td class="text-right">
+                            <button class="btn-delete" onclick="deleteItem(${index})"><i class="material-icons" style="font-size:16px;">close</i></button>
+                        </td>
+                    </tr>`);
             });
             
             grandTotalEl.innerText = `₹${finalTotal.toFixed(2)}`;
