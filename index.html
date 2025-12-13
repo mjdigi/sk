@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tirupathi Store - Billing System</title>
+    <title>Tirupathi Store - POS</title>
     
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
@@ -14,7 +14,6 @@
             --accent-color: #27ae60;
             --danger-color: #c0392b;
             --warning-color: #f39c12;
-            --edit-color: #2980b9;
             --light-bg: #ecf0f1;
             --sidebar-width: 250px;
         }
@@ -30,7 +29,7 @@
             overflow: hidden;
         }
 
-        /* --- SIDEBAR NAVIGATION --- */
+        /* --- SIDEBAR --- */
         .sidebar {
             width: var(--sidebar-width);
             background-color: var(--primary-color);
@@ -84,7 +83,6 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            position: relative;
             width: 100%;
         }
 
@@ -100,195 +98,138 @@
         }
 
         .header-left { display: flex; align-items: center; gap: 15px; }
+        .menu-btn { display: none; background: none; border: none; cursor: pointer; color: var(--primary-color); }
+        h2.page-title { margin: 0; font-size: 1.2rem; }
 
-        .menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--primary-color);
-            padding: 5px;
+        /* Header Stats */
+        .header-stats {
+            display: flex; gap: 15px; align-items: center;
+            background: var(--primary-color); color: white;
+            padding: 5px 15px; border-radius: 20px; font-size: 0.95rem;
         }
+        .stat-val { font-weight: bold; color: #f1c40f; font-size: 1.1rem; }
 
-        h2.page-title { margin: 0; font-size: 1.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        
         .container {
-            display: flex;
-            flex: 1;
-            padding: 10px;
-            gap: 15px;
-            overflow: hidden;
-            height: 100%;
+            display: flex; flex: 1; padding: 10px; gap: 15px; overflow: hidden; height: 100%;
         }
 
-        .input-panel, .list-panel {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
+        .input-panel, .list-panel-wrapper {
+            background: white; padding: 15px; border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
         }
 
         .input-panel { flex: 1; gap: 8px; overflow-y: auto; min-width: 300px; }
-        .list-panel { flex: 1.5; overflow: hidden; }
+        .list-panel-wrapper { flex: 1.2; overflow: hidden; background: #555; /* Dark background to pop the receipt */ padding: 20px; align-items: center; }
 
-        .section-title {
-            font-size: 1rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            border-bottom: 2px solid #eee;
-            padding-bottom: 5px;
-            margin-top: 10px;
-            margin-bottom: 5px;
-        }
-
-        .form-group { display: flex; flex-direction: column; margin-bottom: 6px; }
-        label { font-weight: bold; margin-bottom: 3px; color: #555; font-size: 0.85rem; }
-        input {
-            padding: 8px 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
+        /* --- THERMAL RECEIPT STYLING --- */
+        .thermal-receipt {
+            background: white;
             width: 100%;
-        }
-        input:focus { outline: 2px solid var(--primary-color); }
-        input[readonly] { background-color: #f9f9f9; color: #777; cursor: not-allowed; }
-
-        .btn {
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-            text-align: center;
-            width: 100%;
-        }
-
-        .btn-add { background-color: var(--primary-color); color: white; margin-top: 5px; }
-        .btn-save { background-color: var(--accent-color); color: white; }
-        .btn-new { background-color: #95a5a6; color: white; }
-        .btn-scan { background-color: #e67e22; color: white; margin-bottom: 10px; }
-        .btn-stop { background-color: #c0392b; color: white; margin-bottom: 10px; display: none; }
-
-        .btn-icon {
-            padding: 6px;
-            margin: 0 2px;
-            border-radius: 4px;
-            cursor: pointer;
-            border: none;
-            color: white;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .btn-edit { background-color: var(--edit-color); }
-        .btn-delete-prod { background-color: var(--danger-color); }
-        
-        .header-row { display: flex; justify-content: space-between; align-items: center; }
-        
-        /* Camera Buttons */
-        .cam-controls { display: flex; gap: 10px; }
-        
-        .btn-cam-toggle {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            cursor: pointer;
+            max-width: 380px; /* Standard receipt width look */
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace; /* Monospace for realism */
+            font-size: 13px;
+            color: #000;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
             display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s;
+            flex-direction: column;
+            overflow-y: auto;
+            height: 100%;
         }
-        .btn-cam-toggle.active { background-color: var(--danger-color); }
-        
-        /* New Swipe Button Style */
-        .btn-cam-switch {
-            background-color: var(--warning-color); /* Orange */
-        }
-        .btn-cam-switch:active { transform: rotate(180deg); }
 
-        #reader, #reader-billing {
-            width: 100%;
-            min-height: 200px;
-            background-color: black;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            overflow: hidden;
-            display: none; 
-            position: relative;
-        }
+        .receipt-header { text-align: center; margin-bottom: 10px; }
+        .receipt-header h2 { margin: 0; font-size: 18px; font-weight: 900; text-transform: uppercase; }
+        .receipt-header p { margin: 2px 0; font-size: 12px; }
         
-        .table-wrapper { flex: 1; overflow-y: auto; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 400px; }
-        th { text-align: left; background: #f8f9fa; padding: 8px; border-bottom: 2px solid #ddd; position: sticky; top: 0; z-index: 10; font-size: 0.85rem; }
-        td { padding: 8px; border-bottom: 1px solid #eee; vertical-align: middle; font-size: 0.85rem; }
+        .dashed-line { border-top: 1px dashed #000; margin: 8px 0; display: block; }
+        
+        .receipt-meta { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
+        .receipt-meta div { display: flex; flex-direction: column; gap: 2px; }
+        
+        .receipt-table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+        .receipt-table th { text-align: left; border-bottom: 1px dashed #000; padding: 5px 0; font-size: 12px; }
+        .receipt-table td { padding: 5px 0; vertical-align: top; font-size: 12px; }
         .text-right { text-align: right; }
         .text-center { text-align: center; }
-        
-        .btn-delete { color: var(--danger-color); cursor: pointer; background: none; border: none; font-weight: bold; font-size: 1.1rem; }
 
-        .invoice-header {
-            border-bottom: 2px dashed #ddd;
-            padding-bottom: 10px;
-            margin-bottom: 10px;
+        .receipt-total { 
+            margin-top: 10px; display: flex; justify-content: space-between; 
+            font-weight: bold; font-size: 16px; border-top: 1px dashed #000; padding-top: 10px;
         }
         
-        .store-info { text-align: center; margin-bottom: 15px; }
-        .store-info h2 { margin: 0; font-size: 1.4rem; color: #000; font-weight: 800; text-transform: uppercase; }
-        .store-info p { margin: 2px 0; font-size: 0.9rem; color: #333; }
+        .receipt-footer { text-align: center; margin-top: 20px; font-size: 11px; }
 
-        .invoice-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            font-size: 0.85rem;
-            color: #000;
+        /* Action Buttons (Above Receipt) */
+        .receipt-actions {
+            width: 100%; max-width: 380px;
+            display: flex; gap: 10px; margin-bottom: 10px;
         }
+        .btn-header { padding: 8px; flex: 1; border-radius: 4px; border: none; cursor: pointer; color: white; font-weight: bold; }
+        .btn-new { background: #95a5a6; }
+        .btn-save { background: #27ae60; }
+
+        /* Standard Inputs */
+        .form-group { display: flex; flex-direction: column; margin-bottom: 6px; }
+        label { font-weight: bold; margin-bottom: 3px; color: #555; font-size: 0.85rem; }
+        input { padding: 8px 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; width: 100%; }
+        .btn { padding: 10px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; color: white; width: 100%; }
+        .btn-add { background: var(--primary-color); margin-top: 5px; }
         
-        .meta-left { text-align: left; }
-        .meta-right { text-align: right; }
-        .meta-row { margin: 3px 0; }
-        .meta-label { font-weight: bold; }
+        /* Camera */
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+        .btn-cam-toggle { width: 35px; height: 35px; border-radius: 50%; border: none; background: var(--primary-color); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-cam-toggle.active { background: var(--danger-color); }
+        .btn-cam-switch { background: var(--warning-color); margin-right: 5px; }
+        #reader, #reader-billing { width: 100%; min-height: 200px; background: black; margin-bottom: 10px; border-radius: 5px; display: none; }
 
-        .invoice-footer { margin-top: auto; border-top: 2px solid var(--primary-color); padding-top: 10px; }
-        .total-row {
-            display: flex; justify-content: space-between; font-size: 1.2rem;
-            font-weight: bold; color: var(--primary-color); margin-bottom: 10px;
-        }
-        .action-buttons { display: flex; gap: 10px; }
-        .action-buttons .btn { flex: 1; }
+        .btn-delete { color: #000; font-weight: bold; background: none; border: none; cursor: pointer; font-size: 14px; }
 
+        /* View Management */
         .view-section { display: none; width: 100%; height: 100%; }
         .view-section.active { display: flex; }
-        
         .placeholder-content { padding: 40px; text-align: center; color: #7f8c8d; width: 100%; }
 
+        /* --- MOBILE --- */
         @media (max-width: 768px) {
             .sidebar { position: fixed; left: -260px; height: 100%; box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
             .sidebar.active { transform: translateX(260px); }
             .overlay.active { display: block; }
             .menu-btn { display: block; }
             .container { flex-direction: column; overflow-y: auto; }
-            .input-panel, .list-panel { width: 100%; flex: none; min-width: 0; }
-            .input-panel { margin-bottom: 20px; }
-            .list-panel { min-height: 500px; }
+            .input-panel, .list-panel-wrapper { width: 100%; flex: none; min-width: 0; background: white; padding: 10px; }
+            .list-panel-wrapper { background: #eee; }
+            .header-stats { display: none; }
+            #mobile-stats { display: flex; justify-content: space-between; background: var(--primary-color); color: white; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
         }
+        @media (min-width: 769px) { #mobile-stats { display: none; } }
 
+        /* --- PRINT STYLES (CRITICAL FOR REALISM) --- */
         @media print {
-            .sidebar, .input-panel, header { display: none; }
-            .container { padding: 0; overflow: visible; display: block; }
-            .list-panel {
-                width: 100%; box-shadow: none; border: none; padding: 0;
+            body * { visibility: hidden; height: 0; overflow: hidden; }
+            #printable-area, #printable-area * { visibility: visible; height: auto; overflow: visible; }
+            
+            #printable-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 80mm; /* Standard Thermal Paper Width */
+                padding: 0;
+                margin: 0;
+                background: white;
+                color: black;
+                font-family: 'Courier New', Courier, monospace;
+                box-shadow: none;
             }
-            .action-buttons, .btn-delete, .btn-icon, th:last-child, td:last-child { display: none !important; }
-            .invoice-header { border-bottom: 1px solid #000; }
-            body { font-size: 12px; background: white; height: auto; }
+            
+            /* Hide Delete buttons when printing */
+            .btn-delete, .no-print { display: none !important; }
+            
+            /* Ensure dashed lines print */
+            .dashed-line { border-top: 1px dashed #000 !important; }
+            
+            /* Reset body for print */
+            body { background: white; margin: 0; padding: 0; }
         }
     </style>
 </head>
@@ -298,36 +239,32 @@
 
     <nav class="sidebar" id="sidebar">
         <div class="brand">Tirupathi Store</div>
-        
-        <a class="nav-link active" onclick="switchView('billing')">
-            <i class="material-icons">point_of_sale</i> Billing
-        </a>
-        <a class="nav-link" onclick="switchView('products')">
-            <i class="material-icons">inventory_2</i> Products
-        </a>
-        <a class="nav-link" onclick="switchView('sales')">
-            <i class="material-icons">receipt_long</i> Sales History
-        </a>
-        <a class="nav-link" onclick="switchView('dashboard')">
-            <i class="material-icons">dashboard</i> Dashboard
-        </a>
+        <a class="nav-link active" onclick="switchView('billing')"><i class="material-icons">point_of_sale</i> Billing</a>
+        <a class="nav-link" onclick="switchView('products')"><i class="material-icons">inventory_2</i> Products</a>
+        <a class="nav-link" onclick="switchView('sales')"><i class="material-icons">receipt_long</i> Sales History</a>
+        <a class="nav-link" onclick="switchView('dashboard')"><i class="material-icons">dashboard</i> Dashboard</a>
     </nav>
 
     <div class="main-content">
         <header>
             <div class="header-left">
-                <button class="menu-btn" onclick="toggleSidebar()">
-                    <i class="material-icons" style="font-size: 28px;">menu</i>
-                </button>
+                <button class="menu-btn" onclick="toggleSidebar()"><i class="material-icons" style="font-size: 28px;">menu</i></button>
                 <h2 class="page-title" id="page-title">New Invoice</h2>
             </div>
-            <div id="date-display" style="font-size: 0.9rem; font-weight: bold;"></div>
+            <div class="header-stats" id="headerStats">
+                <div class="stat-item">Qty: <span class="stat-val" id="headQty">0</span></div>
+                <div style="width:1px; height:15px; background:rgba(255,255,255,0.3);"></div>
+                <div class="stat-item">Total: <span class="stat-val" id="headTotal">₹0.00</span></div>
+            </div>
         </header>
 
         <div id="view-billing" class="view-section active container">
             <div class="input-panel">
-                
-                <div class="section-title">Customer Details</div>
+                <div id="mobile-stats">
+                    <span>Qty: <b id="mobQty">0</b></span>
+                    <span>Total: <b id="mobTotal">₹0.00</b></span>
+                </div>
+
                 <div class="form-group">
                     <label>Customer Name</label>
                     <input type="text" id="custName" placeholder="Enter Name">
@@ -337,17 +274,11 @@
                     <input type="number" id="custPhone" placeholder="Enter Mobile No">
                 </div>
 
-                <div class="header-row" style="margin-top:10px;">
-                    <div class="section-title" style="border:none; margin:0;">Add Item</div>
-                    
-                    <div class="cam-controls">
-                        <button class="btn-cam-toggle btn-cam-switch" id="btnSwitchBillCam" onclick="switchBillingCamera()" title="Switch Front/Back">
-                            <i class="material-icons">flip_camera_ios</i>
-                        </button>
-                        
-                        <button class="btn-cam-toggle" id="btnToggleBillCam" onclick="toggleBillingCamera()" title="Toggle Camera">
-                            <i class="material-icons">camera_alt</i>
-                        </button>
+                <div class="header-row">
+                    <label style="margin:0">Add Item</label>
+                    <div style="display:flex;">
+                        <button class="btn-cam-toggle btn-cam-switch" onclick="switchBillingCamera()"><i class="material-icons">flip_camera_ios</i></button>
+                        <button class="btn-cam-toggle" id="btnToggleBillCam" onclick="toggleBillingCamera()"><i class="material-icons">camera_alt</i></button>
                     </div>
                 </div>
                 
@@ -372,49 +303,61 @@
                 <button class="btn btn-add" id="btnAdd">Add Item</button>
             </div>
 
-            <div class="list-panel">
-                <div class="invoice-header">
-                    <div class="store-info">
-                        <h2>Tirupathi Store</h2>
-                        <p>Kadaladi - 623703</p>
-                        <p>Ph: 0000000000</p>
-                    </div>
-                    
-                    <div class="invoice-meta">
-                        <div class="meta-left">
-                            <div class="meta-row"><span class="meta-label">Date:</span> <span id="billDate"></span></div>
-                            <div class="meta-row"><span class="meta-label">Time:</span> <span id="billTime"></span></div>
-                            <div class="meta-row"><span class="meta-label">Bill No:</span> <span id="billNo">#</span></div>
-                        </div>
-                        <div class="meta-right">
-                            <div class="meta-row"><span class="meta-label">Name:</span> <span id="dispCustName">-</span></div>
-                            <div class="meta-row"><span class="meta-label">Ph:</span> <span id="dispCustPhone">-</span></div>
-                        </div>
-                    </div>
+            <div class="list-panel-wrapper">
+                <div class="receipt-actions no-print">
+                    <button class="btn-header btn-new" id="btnNew"><i class="material-icons" style="font-size:16px; vertical-align:middle;">restart_alt</i> Clear</button>
+                    <button class="btn-header btn-save" id="btnSave"><i class="material-icons" style="font-size:16px; vertical-align:middle;">print</i> Print</button>
                 </div>
 
-                <div class="table-wrapper">
-                    <table id="billTable">
+                <div class="thermal-receipt" id="printable-area">
+                    <div class="receipt-header">
+                        <h2>Tirupathi Store</h2>
+                        <p>Kadaladi - 623703</p>
+                        <p>Ph: 98765 43210</p>
+                    </div>
+                    
+                    <span class="dashed-line"></span>
+                    
+                    <div class="receipt-meta">
+                        <div style="text-align:left;">
+                            <span>No: <span id="billNo">#</span></span><br>
+                            <span>Dt: <span id="billDate"></span></span><br>
+                            <span>Tm: <span id="billTime"></span></span>
+                        </div>
+                        <div style="text-align:right;">
+                            <span>Name: <span id="dispCustName">-</span></span><br>
+                            <span>Ph: <span id="dispCustPhone">-</span></span>
+                        </div>
+                    </div>
+
+                    <span class="dashed-line"></span>
+
+                    <table class="receipt-table">
                         <thead>
                             <tr>
-                                <th>Item</th>
+                                <th style="width:45%">Item</th>
                                 <th class="text-right">Price</th>
-                                <th class="text-right">Qty</th>
-                                <th class="text-right">Total</th>
-                                <th></th>
+                                <th class="text-center">Qty</th>
+                                <th class="text-right">Amt</th>
+                                <th class="no-print" style="width:10px"></th>
                             </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody id="billTable">
+                            </tbody>
                     </table>
-                </div>
-                <div class="invoice-footer">
-                    <div class="total-row">
-                        <span>Total:</span>
+
+                    <span class="dashed-line"></span>
+
+                    <div class="receipt-total">
+                        <span>TOTAL:</span>
                         <span id="grandTotal">₹0.00</span>
                     </div>
-                    <div class="action-buttons">
-                        <button class="btn btn-new" id="btnNew">Clear</button>
-                        <button class="btn btn-save" id="btnSave">Print</button>
+
+                    <span class="dashed-line"></span>
+
+                    <div class="receipt-footer">
+                        <p>*** THANK YOU VISIT AGAIN ***</p>
+                        <p>Software by WimHub</p>
                     </div>
                 </div>
             </div>
@@ -423,72 +366,37 @@
         <div id="view-products" class="view-section container">
             <div class="input-panel">
                 <h3>Product Details</h3>
-                <button class="btn btn-scan" id="startScanBtn" onclick="startCamera()">
-                    <i class="material-icons" style="vertical-align: middle;">camera_alt</i> Scan Cam
-                </button>
-                <button class="btn btn-stop" id="stopScanBtn" onclick="stopCamera()">
-                    <i class="material-icons" style="vertical-align: middle;">stop</i> Stop Cam
-                </button>
+                <div style="display:flex; gap:10px; margin-bottom:10px;">
+                    <button class="btn" style="background:#e67e22;" id="startScanBtn" onclick="startCamera()">Start Cam</button>
+                    <button class="btn" style="background:#c0392b; display:none;" id="stopScanBtn" onclick="stopCamera()">Stop Cam</button>
+                </div>
                 <div id="reader"></div>
-                <div class="form-group">
-                    <label>ID</label>
-                    <input type="text" id="prodId" readonly placeholder="Auto ID" style="background:#f0f0f0;">
-                </div>
-                <div class="form-group">
-                    <label>Barcode</label>
-                    <input type="text" id="prodCodeNo" placeholder="Scan/Type" style="background:#fff3cd;">
-                </div>
-                <div class="form-group">
-                    <label>Name</label>
-                    <input type="text" id="prodName" placeholder="Name">
-                </div>
-                <div class="form-group">
-                    <label>Price</label>
-                    <input type="number" id="prodPrice" placeholder="0.00">
-                </div>
-                <button class="btn btn-save" id="btnSaveProduct">Save Product</button>
-                <p id="prod-status" style="margin-top:5px; color: green; font-size: 0.9rem;"></p>
+                <div class="form-group"><label>ID</label><input type="text" id="prodId" readonly style="background:#f0f0f0;"></div>
+                <div class="form-group"><label>Barcode</label><input type="text" id="prodCodeNo" style="background:#fff3cd;"></div>
+                <div class="form-group"><label>Name</label><input type="text" id="prodName"></div>
+                <div class="form-group"><label>Price</label><input type="number" id="prodPrice"></div>
+                <button class="btn btn-add" style="background:var(--accent-color);" id="btnSaveProduct">Save Product</button>
+                <p id="prod-status" style="color:green; margin-top:5px;"></p>
             </div>
-            <div class="list-panel">
+            <div class="input-panel" style="flex:1.5;">
                 <h3>Product List</h3>
                 <div class="table-wrapper">
-                    <table id="productTable">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Code</th>
-                                <th>Name</th>
-                                <th class="text-right">Price</th>
-                                <th class="text-center">Act</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
+                    <table style="width:100%; border-collapse:collapse;">
+                        <thead><tr style="background:#eee;"><th style="padding:8px;">Code</th><th>Name</th><th>Price</th><th>Act</th></tr></thead>
+                        <tbody id="productTable"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <div id="view-sales" class="view-section container">
-            <div class="placeholder-content">
-                <i class="material-icons" style="font-size: 64px;">receipt_long</i>
-                <h2>Sales History</h2>
-                <p>Features coming soon...</p>
-            </div>
-        </div>
-        <div id="view-dashboard" class="view-section container">
-            <div class="placeholder-content">
-                <i class="material-icons" style="font-size: 64px;">dashboard</i>
-                <h2>Dashboard</h2>
-                <p>Analytics coming soon...</p>
-            </div>
-        </div>
+        <div id="view-sales" class="view-section container"><div class="placeholder-content"><h2>Sales History</h2></div></div>
+        <div id="view-dashboard" class="view-section container"><div class="placeholder-content"><h2>Dashboard</h2></div></div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, push, set, get, child, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyApYK_C_C8CRy8FpIO3tskc1SFl74ID01Y",
             authDomain: "tirupathistore-244af.firebaseapp.com",
@@ -506,409 +414,180 @@
         let currentBill = [];
         let billId = Date.now().toString().slice(-6);
 
-        // --- DOM ELEMENTS ---
+        // Elements
         const billDateEl = document.getElementById('billDate');
         const billTimeEl = document.getElementById('billTime');
         const billNoEl = document.getElementById('billNo');
-
         const custNameInput = document.getElementById('custName');
         const custPhoneInput = document.getElementById('custPhone');
         const dispCustName = document.getElementById('dispCustName');
         const dispCustPhone = document.getElementById('dispCustPhone');
+        const headQty = document.getElementById('headQty');
+        const headTotal = document.getElementById('headTotal');
+        const mobQty = document.getElementById('mobQty');
+        const mobTotal = document.getElementById('mobTotal');
 
         const now = new Date();
         billDateEl.innerText = now.toLocaleDateString();
-        billTimeEl.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        billTimeEl.innerText = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
         billNoEl.innerText = `#${billId}`;
 
-        custNameInput.addEventListener('input', (e) => {
-            dispCustName.innerText = e.target.value || '-';
-        });
-        custPhoneInput.addEventListener('input', (e) => {
-            dispCustPhone.innerText = e.target.value || '-';
-        });
+        custNameInput.addEventListener('input', (e) => { dispCustName.innerText = e.target.value || '-'; });
+        custPhoneInput.addEventListener('input', (e) => { dispCustPhone.innerText = e.target.value || '-'; });
 
-        // --- UI FUNCTIONS (DRAWER) ---
-        window.toggleSidebar = () => {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-        };
+        // --- SOUND ---
+        let beepContext = null;
+        function initBeep() { if(!beepContext) beepContext = new (window.AudioContext || window.webkitAudioContext)(); if(beepContext.state === 'suspended') beepContext.resume(); }
+        function playScanSound() {
+            if(!beepContext) return;
+            const osc = beepContext.createOscillator(); const gain = beepContext.createGain();
+            osc.connect(gain); gain.connect(beepContext.destination);
+            osc.type='square'; osc.frequency.setValueAtTime(1200, beepContext.currentTime); gain.gain.setValueAtTime(0.1, beepContext.currentTime);
+            osc.start(); osc.stop(beepContext.currentTime + 0.1);
+        }
 
+        // --- UI ---
+        window.toggleSidebar = () => { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); };
         window.switchView = (viewName) => {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-            const view = document.getElementById(`view-${viewName}`);
-            if(view) view.classList.add('active');
+            document.getElementById(`view-${viewName}`).classList.add('active');
             if(window.innerWidth <= 768) window.toggleSidebar();
-            if(viewName !== 'billing' && billingScanner) toggleBillingCamera(); 
+            if(viewName !== 'billing' && billingScanner) toggleBillingCamera();
             if(viewName !== 'products') window.stopCamera();
-            const titles = {'billing': 'New Invoice', 'products': 'Products', 'sales': 'Sales', 'dashboard': 'Dashboard'};
-            document.getElementById('page-title').innerText = titles[viewName] || 'System';
+            document.getElementById('headerStats').style.display = (viewName === 'billing') ? 'flex' : 'none';
         };
 
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function() {
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        // ------------------------------------------
-        // AUDIO CONTEXT (SOUND)
-        // ------------------------------------------
-        let beepContext = null;
-
-        function initBeep() {
-            if (!beepContext) {
-                beepContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (beepContext.state === 'suspended') {
-                beepContext.resume();
-            }
-        }
-
-        function playScanSound() {
-            if (!beepContext) return;
-            const osc = beepContext.createOscillator();
-            const gain = beepContext.createGain();
-            osc.connect(gain);
-            gain.connect(beepContext.destination);
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(1200, beepContext.currentTime);
-            gain.gain.setValueAtTime(0.1, beepContext.currentTime);
-            osc.start();
-            osc.stop(beepContext.currentTime + 0.1);
-        }
-
-        // ------------------------------------------
-        // 1. BILLING CAMERA LOGIC
-        // ------------------------------------------
+        // --- BILLING LOGIC ---
         let billingScanner = null;
         let isScanCooldown = false;
-        let currentFacingMode = "environment"; // Default: Back Camera
+        let currentFacingMode = "environment";
 
-        // NEW: Switch Camera Function
         window.switchBillingCamera = async () => {
-            // 1. Toggle Mode
             currentFacingMode = (currentFacingMode === "environment") ? "user" : "environment";
-            
-            // 2. If camera is running, restart it with new mode
-            if (billingScanner) {
-                await toggleBillingCamera(); // Stop it
-                await toggleBillingCamera(); // Start it (it uses currentFacingMode)
-            } else {
-                alert("Next scan will use " + (currentFacingMode === "environment" ? "Back" : "Front") + " camera.");
-            }
-        }
+            if (billingScanner) { await toggleBillingCamera(); await toggleBillingCamera(); }
+            else { alert("Next scan: " + (currentFacingMode === "environment" ? "Back" : "Front") + " Cam"); }
+        };
 
         window.toggleBillingCamera = async () => {
-            initBeep(); // Unlock Audio
-
+            initBeep();
             const readerDiv = document.getElementById("reader-billing");
             const btnToggle = document.getElementById("btnToggleBillCam");
-            const icon = btnToggle.querySelector("i");
-
-            // STOP CAMERA
+            
             if (billingScanner) {
-                try { await billingScanner.stop(); await billingScanner.clear(); } catch(e) {}
-                billingScanner = null;
-                readerDiv.style.display = "none";
-                btnToggle.classList.remove("active");
-                icon.innerText = "camera_alt";
+                try { await billingScanner.stop(); await billingScanner.clear(); } catch(e){}
+                billingScanner = null; readerDiv.style.display = "none"; btnToggle.classList.remove("active");
                 return;
             }
-
-            // START CAMERA
-            if (location.protocol === 'file:') return alert("Use Localhost or HTTPS");
-
-            readerDiv.style.display = "block";
-            btnToggle.classList.add("active");
-            icon.innerText = "stop";
-
+            if (location.protocol === 'file:') return alert("Use Localhost");
+            
+            readerDiv.style.display = "block"; btnToggle.classList.add("active");
             try {
                 billingScanner = new Html5Qrcode("reader-billing");
-                
-                const config = { 
-                    fps: 25, 
-                    qrbox: { width: 280, height: 100 }, 
-                    experimentalFeatures: { useBarCodeDetectorIfSupported: true } 
-                };
-
-                // Use currentFacingMode variable
-                await billingScanner.start(
-                    { facingMode: currentFacingMode },
-                    config,
-                    (decodedText) => {
-                        if (!isScanCooldown) {
-                            handleBillingScan(decodedText);
-                        }
-                    },
-                    (errorMessage) => {}
-                );
-            } catch (err) {
-                alert("Camera Error: " + err);
-                toggleBillingCamera(); // Reset UI on error
-            }
+                await billingScanner.start({ facingMode: currentFacingMode }, { fps: 25, qrbox: { width: 280, height: 100 }, experimentalFeatures: { useBarCodeDetectorIfSupported: true } },
+                (decodedText) => { if (!isScanCooldown) handleBillingScan(decodedText); }, () => {});
+            } catch (err) { alert("Cam Error: " + err); toggleBillingCamera(); }
         };
 
         async function handleBillingScan(code) {
-            playScanSound(); 
-
-            isScanCooldown = true;
-            document.getElementById('billBarcode').value = code;
-
+            playScanSound(); isScanCooldown = true; document.getElementById('billBarcode').value = code;
             try {
                 const snapshot = await get(child(ref(db), `products/${code}`));
                 if(snapshot.exists()) {
                     const data = snapshot.val();
-                    
                     const existingItem = currentBill.find(item => item.name === data.name);
-                    if (existingItem) {
-                        existingItem.qty += 1;
-                        existingItem.total = existingItem.price * existingItem.qty;
-                    } else {
-                        currentBill.push({ name: data.name, price: data.price, qty: 1, total: data.price });
-                    }
+                    if (existingItem) { existingItem.qty += 1; existingItem.total = existingItem.price * existingItem.qty; }
+                    else { currentBill.push({ name: data.name, price: data.price, qty: 1, total: data.price }); }
                     renderBill();
-                    
-                    const input = document.getElementById('billBarcode');
-                    input.style.backgroundColor = "#27ae60"; input.style.color = "white";
-                    setTimeout(() => { input.style.backgroundColor = "#e8f8f5"; input.style.color = "black"; }, 500);
-                } else {
-                    alert("Product Not Found: " + code);
-                }
-            } catch (e) { console.error(e); }
-
-            setTimeout(() => {
-                isScanCooldown = false;
-                document.getElementById('billBarcode').value = ""; 
-            }, 1000); 
+                    const input = document.getElementById('billBarcode'); input.style.backgroundColor = "#27ae60";
+                    setTimeout(() => { input.style.backgroundColor = "#e8f8f5"; }, 500);
+                } else { alert("Not Found: " + code); }
+            } catch(e) {}
+            setTimeout(() => { isScanCooldown = false; document.getElementById('billBarcode').value = ""; }, 1000);
         }
 
         const billBarcode = document.getElementById('billBarcode');
-        const pName = document.getElementById('pName');
-        const pPrice = document.getElementById('pPrice');
-        const pQty = document.getElementById('pQty');
-        const grandTotalEl = document.getElementById('grandTotal');
-
         billBarcode.addEventListener('change', async () => {
-            const code = billBarcode.value.trim();
-            if(!code) return;
-            if(!isScanCooldown) {
-                try {
-                    const snapshot = await get(child(ref(db), `products/${code}`));
-                    if(snapshot.exists()) {
-                        const data = snapshot.val();
-                        pName.value = data.name; pPrice.value = data.price; pQty.focus(); 
-                    } else { alert("Product not found!"); }
-                } catch(e) {}
-            }
+            const code = billBarcode.value.trim(); if(!code || isScanCooldown) return;
+            try {
+                const snapshot = await get(child(ref(db), `products/${code}`));
+                if(snapshot.exists()) {
+                    const data = snapshot.val();
+                    document.getElementById('pName').value = data.name; document.getElementById('pPrice').value = data.price; document.getElementById('pQty').focus();
+                } else { alert("Product not found"); }
+            } catch(e) {}
         });
 
         window.addItem = () => {
-            const name = pName.value.trim();
-            const price = parseFloat(pPrice.value);
-            const qty = parseFloat(pQty.value);
-            if (!name || isNaN(price) || isNaN(qty) || qty <= 0) return alert("Invalid details");
-            
+            const name = document.getElementById('pName').value; const price = parseFloat(document.getElementById('pPrice').value); const qty = parseFloat(document.getElementById('pQty').value);
+            if(!name || isNaN(price)) return;
             const existingItem = currentBill.find(item => item.name === name);
-            if(existingItem) {
-                existingItem.qty += qty;
-                existingItem.total = existingItem.price * existingItem.qty;
-            } else {
-                currentBill.push({ name, price, qty, total: price * qty });
-            }
-            
+            if(existingItem) { existingItem.qty += qty; existingItem.total = existingItem.price * existingItem.qty; }
+            else { currentBill.push({ name, price, qty, total: price * qty }); }
             renderBill();
-            billBarcode.value = ''; pName.value = ''; pPrice.value = ''; pQty.value = '1'; billBarcode.focus();
+            document.getElementById('billBarcode').value=''; document.getElementById('pName').value=''; document.getElementById('pPrice').value=''; document.getElementById('pQty').value='1';
         };
 
         function renderBill() {
-            const tbody = document.querySelector('#billTable tbody');
-            tbody.innerHTML = '';
-            let finalTotal = 0;
+            const tbody = document.getElementById('billTable'); tbody.innerHTML = '';
+            let total = 0; let qty = 0;
             currentBill.forEach((item, index) => {
-                finalTotal += item.total;
-                tbody.insertAdjacentHTML('beforeend', `
-                    <tr><td>${item.name}</td><td class="text-right">₹${item.price.toFixed(2)}</td>
-                    <td class="text-right">${item.qty}</td><td class="text-right">₹${item.total.toFixed(2)}</td>
-                    <td class="text-right"><button class="btn-delete" onclick="deleteItem(${index})">×</button></td></tr>`);
+                total += item.total; qty += item.qty;
+                tbody.innerHTML += `<tr>
+                    <td>${item.name}</td><td class="text-right">${item.price}</td><td class="text-center">${item.qty}</td><td class="text-right">${item.total.toFixed(2)}</td>
+                    <td class="no-print"><button class="btn-delete" onclick="deleteItem(${index})">x</button></td>
+                </tr>`;
             });
-            grandTotalEl.innerText = `₹${finalTotal.toFixed(2)}`;
-            window.deleteItem = (idx) => { currentBill.splice(idx, 1); renderBill(); };
+            document.getElementById('grandTotal').innerText = `₹${total.toFixed(2)}`;
+            headQty.innerText = qty; headTotal.innerText = `₹${total.toFixed(2)}`;
+            mobQty.innerText = qty; mobTotal.innerText = `₹${total.toFixed(2)}`;
+            window.deleteItem = (i) => { currentBill.splice(i,1); renderBill(); };
         }
 
         document.getElementById('btnSave').addEventListener('click', () => {
-            if(currentBill.length === 0) return alert("Empty Bill");
+            if(currentBill.length === 0) return alert("Empty");
             const btn = document.getElementById('btnSave'); btn.innerText = "Saving...";
-            const total = currentBill.reduce((a, b) => a + b.total, 0);
-            
-            const custName = custNameInput.value.trim();
-            const custPhone = custPhoneInput.value.trim();
-
-            const billData = {
-                id: billId,
-                date: new Date().toISOString(),
-                customerName: custName,
-                customerPhone: custPhone,
-                items: currentBill,
-                grandTotal: total
-            };
-
-            set(push(ref(db, 'bills')), billData)
-                .then(() => { 
-                    window.print(); 
-                    window.resetSystem(); 
-                })
-                .finally(() => { btn.innerText = "Print"; });
+            const total = currentBill.reduce((a,b)=>a+b.total,0);
+            const billData = { id: billId, date: new Date().toISOString(), customer: custNameInput.value, items: currentBill, total: total };
+            set(push(ref(db, 'bills')), billData).then(() => { window.print(); window.resetSystem(); }).finally(() => btn.innerHTML = '<i class="material-icons" style="font-size:16px; vertical-align:middle;">print</i> Print');
         });
 
         window.resetSystem = () => {
-            currentBill = []; 
-            billId = Date.now().toString().slice(-6);
-            billNoEl.innerText = `#${billId}`;
-            renderBill();
-            billBarcode.value = ''; pName.value = ''; pPrice.value = '';
-            custNameInput.value = ''; custPhoneInput.value = '';
-            dispCustName.innerText = '-'; dispCustPhone.innerText = '-';
-            
-            const now = new Date();
-            billDateEl.innerText = now.toLocaleDateString();
-            billTimeEl.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            currentBill = []; billId = Date.now().toString().slice(-6); billNoEl.innerText = `#${billId}`; renderBill();
+            custNameInput.value=''; custPhoneInput.value=''; dispCustName.innerText='-'; dispCustPhone.innerText='-';
         };
 
         document.getElementById('btnAdd').addEventListener('click', window.addItem);
         document.getElementById('btnNew').addEventListener('click', window.resetSystem);
-        pQty.addEventListener('keypress', (e) => { if(e.key === 'Enter') window.addItem(); });
 
-        // ------------------------------------------
-        // 2. PRODUCT LOGIC
-        // ------------------------------------------
-        let html5QrcodeScanner = null;
-
+        // --- PRODUCT MGMT ---
+        let prodScanner = null;
         window.startCamera = async () => {
-            if (location.protocol === 'file:') return alert("Use Localhost or HTTPS");
-            
-            const readerDiv = document.getElementById("reader");
-            readerDiv.style.display = "block";
-            document.getElementById("startScanBtn").style.display = "none";
-            document.getElementById("stopScanBtn").style.display = "block";
-
-            if (html5QrcodeScanner) {
-                try { await html5QrcodeScanner.stop(); await html5QrcodeScanner.clear(); } catch (e) {}
-                html5QrcodeScanner = null;
-            }
-
-            try {
-                html5QrcodeScanner = new Html5Qrcode("reader");
-                await html5QrcodeScanner.start(
-                    { facingMode: "environment" },
-                    { fps: 20, qrbox: { width: 280, height: 100 } }, // Optimization applied here too
-                    (decodedText) => {
-                        window.stopCamera();
-                        const prodCodeNo = document.getElementById('prodCodeNo');
-                        prodCodeNo.value = decodedText;
-                        prodCodeNo.dispatchEvent(new Event('change'));
-                        playScanSound(); // Beep here too
-                    },
-                    (errorMessage) => { }
-                );
-            } catch (err) {
-                alert("Camera Error: " + err);
-                window.stopCamera();
-            }
+            if (location.protocol === 'file:') return alert("Use Localhost");
+            document.getElementById('reader').style.display='block'; document.getElementById('startScanBtn').style.display='none'; document.getElementById('stopScanBtn').style.display='block';
+            try { prodScanner = new Html5Qrcode("reader"); await prodScanner.start({ facingMode: "environment" }, { fps:20, qrbox:{width:250,height:250}}, (txt)=>{ window.stopCamera(); const el=document.getElementById('prodCodeNo'); el.value=txt; el.dispatchEvent(new Event('change')); },()=>{}); } catch(e){}
         };
+        window.stopCamera = async () => { if(prodScanner){ await prodScanner.stop(); prodScanner=null;} document.getElementById('reader').style.display='none'; document.getElementById('startScanBtn').style.display='block'; document.getElementById('stopScanBtn').style.display='none'; };
 
-        window.stopCamera = async () => {
-            const readerDiv = document.getElementById("reader");
-            if (html5QrcodeScanner) {
-                try { await html5QrcodeScanner.stop(); await html5QrcodeScanner.clear(); } catch (e) {}
-                html5QrcodeScanner = null;
-            }
-            readerDiv.style.display = "none";
-            document.getElementById("startScanBtn").style.display = "block";
-            document.getElementById("stopScanBtn").style.display = "none";
-        };
-
-        const prodId = document.getElementById('prodId');
-        const prodCodeNo = document.getElementById('prodCodeNo');
-        const prodName = document.getElementById('prodName');
-        const prodPrice = document.getElementById('prodPrice');
-        const prodStatus = document.getElementById('prod-status');
-
-        prodCodeNo.addEventListener('change', async () => {
-            const code = prodCodeNo.value.trim();
-            if(!code) return;
-            prodStatus.innerText = "Checking...";
-            try {
-                const snapshot = await get(child(ref(db), `products/${code}`));
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    prodId.value = data.id || "PID-" + Date.now();
-                    prodName.value = data.name;
-                    prodPrice.value = data.price;
-                    prodStatus.innerText = "Found. Edit & Save.";
-                } else {
-                    prodId.value = "PID-" + Date.now().toString().slice(-6);
-                    prodStatus.innerText = "Online Search...";
-                    fetch(`https://world.openfoodfacts.org/api/v0/product/${code}.json`)
-                        .then(res => res.json())
-                        .then(data => {
-                            if(data.status === 1) {
-                                prodName.value = data.product.product_name || "";
-                                prodStatus.innerText = "Found Online!";
-                            } else {
-                                prodStatus.innerText = "New Product.";
-                                prodName.value = "";
-                            }
-                        }).catch(() => { prodStatus.innerText = "Offline."; });
-                    prodPrice.value = "";
-                }
-            } catch (error) { prodStatus.innerText = "DB Error."; }
+        document.getElementById('prodCodeNo').addEventListener('change', async (e) => {
+            const code = e.target.value.trim(); if(!code) return;
+            try { const snap = await get(child(ref(db), `products/${code}`));
+            if(snap.exists()){ const d=snap.val(); document.getElementById('prodId').value=d.id; document.getElementById('prodName').value=d.name; document.getElementById('prodPrice').value=d.price; document.getElementById('prod-status').innerText="Found"; }
+            else { document.getElementById('prodId').value = "P"+Date.now(); document.getElementById('prod-status').innerText="New"; document.getElementById('prodPrice').value=''; }
+            } catch(e){}
         });
 
         document.getElementById('btnSaveProduct').addEventListener('click', () => {
-            const id = prodId.value.trim(); const code = prodCodeNo.value.trim();
-            const name = prodName.value.trim(); const price = parseFloat(prodPrice.value);
-            if(!id || !code || !name || isNaN(price)) return alert("Fill all fields");
-
-            set(ref(db, 'products/' + code), { id, codeNo: code, name, price }).then(() => {
-                prodStatus.innerText = "Saved!"; prodId.value = ""; prodCodeNo.value = ""; 
-                prodName.value = ""; prodPrice.value = ""; window.stopCamera(); 
-            }).catch(e => alert("Error: " + e.message));
+            const code = document.getElementById('prodCodeNo').value; const name = document.getElementById('prodName').value; const price = document.getElementById('prodPrice').value;
+            if(!code || !name) return alert("Enter details");
+            set(ref(db, `products/${code}`), { id: document.getElementById('prodId').value, codeNo: code, name, price: parseFloat(price) }).then(() => { alert("Saved"); document.getElementById('prodCodeNo').value=''; });
         });
 
-        const productTableBody = document.querySelector('#productTable tbody');
-        onValue(ref(db, 'products'), (snapshot) => {
-            productTableBody.innerHTML = '';
-            snapshot.forEach((childSnapshot) => {
-                const item = childSnapshot.val();
-                const code = item.codeNo || item.barcode; 
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><small>${item.id || '-'}</small></td><td>${code}</td><td>${item.name}</td>
-                    <td class="text-right">₹${item.price.toFixed(2)}</td>
-                    <td class="text-center">
-                        <button class="btn-icon btn-edit"><i class="material-icons" style="font-size:16px;">edit</i></button>
-                        <button class="btn-icon btn-delete-prod"><i class="material-icons" style="font-size:16px;">delete</i></button>
-                    </td>`;
-                tr.querySelector('.btn-edit').addEventListener('click', () => window.editProduct(item));
-                tr.querySelector('.btn-delete-prod').addEventListener('click', () => window.deleteProduct(code));
-                productTableBody.prepend(tr);
-            });
+        const prodTable = document.getElementById('productTable');
+        onValue(ref(db, 'products'), (snap) => {
+            prodTable.innerHTML=''; snap.forEach(c => { const d=c.val(); prodTable.innerHTML += `<tr><td style="padding:5px;">${d.codeNo}</td><td>${d.name}</td><td>${d.price}</td><td><button class="btn-delete" onclick="delProd('${d.codeNo}')">x</button></td></tr>`; });
         });
-
-        window.editProduct = (item) => {
-            prodId.value = item.id; prodCodeNo.value = item.codeNo || item.barcode;
-            prodName.value = item.name; prodPrice.value = item.price;
-            prodStatus.innerText = "Editing Mode"; document.querySelector('.input-panel').scrollTop = 0;
-        };
-
-        window.deleteProduct = (code) => {
-            if (confirm("Delete product?")) remove(ref(db, 'products/' + code)).catch(e => alert(e.message));
-        };
+        window.delProd = (code) => { if(confirm("Delete?")) remove(ref(db, `products/${code}`)); };
     </script>
 </body>
 </html>
