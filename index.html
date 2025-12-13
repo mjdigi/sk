@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tirupathi Store - Premium Billing</title>
     
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -38,8 +38,8 @@
             padding: 0;
             background-color: var(--bg-color);
             display: flex;
-            height: 100vh;
-            overflow: hidden;
+            height: 100vh; /* Default Desktop Height */
+            overflow: hidden; /* Default Desktop Scroll Lock */
             color: var(--text-main);
         }
 
@@ -54,13 +54,14 @@
             height: 100vh;
             z-index: 1000;
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; /* Desktop position */
         }
 
         .brand {
             font-size: 1.4rem;
             text-align: center;
             font-weight: 700;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             padding-bottom: 15px;
             border-bottom: 1px solid rgba(255,255,255,0.15);
         }
@@ -100,7 +101,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow: hidden; /* Desktop scroll lock */
             position: relative;
             width: 100%;
         }
@@ -115,6 +116,8 @@
             flex-shrink: 0;
             height: 70px;
             z-index: 100;
+            position: sticky;
+            top: 0;
         }
 
         .header-left { display: flex; align-items: center; gap: 15px; }
@@ -145,9 +148,8 @@
             border: 1px solid rgba(255,255,255,0.8);
         }
 
-        /* DESKTOP: Limit width of inputs for better aesthetics */
+        /* Desktop specific sizing */
         .input-panel { flex: 1; gap: 12px; overflow-y: auto; min-width: 320px; max-width: 400px; }
-        
         .list-panel { flex: 2; overflow: hidden; position: relative; }
 
         .section-title {
@@ -214,27 +216,65 @@
         .invoice-footer { margin-top: auto; border-top: 2px solid #f1f1f1; padding-top: 15px; }
         .total-row { display: flex; justify-content: space-between; font-size: 1.4rem; font-weight: 700; color: #11998e; background: #f1fcfc; padding: 15px; border-radius: 12px; }
 
-        /* --- MOBILE RESPONSIVE --- */
+        /* --- MOBILE RESPONSIVE FIXES (Critical for Refresh/Reload Bar) --- */
         @media (max-width: 768px) {
-            .sidebar { position: fixed; left: -270px; } .sidebar.active { transform: translateX(270px); }
-            .overlay.active { display: block; } .menu-btn { display: block; }
+            /* 1. ENABLE BODY SCROLLING */
+            body { 
+                height: auto !important; 
+                overflow-y: auto !important; 
+                display: block; 
+            }
+
+            /* 2. SIDEBAR AS OVERLAY */
+            .sidebar { 
+                position: fixed; 
+                left: -270px; 
+                top: 0;
+                height: 100%; 
+                box-shadow: 2px 0 20px rgba(0,0,0,0.5);
+            } 
+            .sidebar.active { transform: translateX(270px); }
+            .overlay.active { display: block; } 
+            .menu-btn { display: block; }
             
-            /* FORCE FULL WIDTH ON MOBILE */
-            .view-section { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            /* 3. MAIN CONTENT UNLOCK */
+            .main-content { 
+                height: auto !important; 
+                overflow: visible !important; 
+            }
+
+            /* 4. SECTIONS STACK NATURALLY (No internal scrollbar) */
+            .view-section { 
+                display: none; /* hidden if not active */
+                flex-direction: column; 
+                padding: 10px; 
+                gap: 15px; 
+                height: auto !important; 
+                overflow: visible !important; 
+            }
             
+            .view-section.active { display: flex; }
+            
+            /* 5. PANELS FULL WIDTH */
             .input-panel, .list-panel { 
                 width: 100% !important; 
-                max-width: 100% !important; /* OVERRIDE DESKTOP MAX-WIDTH */
+                max-width: 100% !important; 
                 flex: none; 
+                height: auto !important; 
+                overflow: visible !important;
             } 
             
             .input-panel { order: 1; } 
-            .list-panel { order: 2; min-height: 400px; }
+            .list-panel { order: 2; }
             
+            /* 6. HEADER & BUTTONS */
             .invoice-top-row { flex-direction: column; align-items: flex-start; gap: 10px; }
-            .header-actions { width: 100%; justify-content: space-between; } 
-            .btn-header { flex: 1; padding: 8px; } 
+            .header-actions { width: 100%; justify-content: space-between; gap: 5px; } 
+            .btn-header { flex: 1; padding: 8px 5px; min-width: 0; font-size: 0.75rem; } 
             .btn-text { display: none; }
+            
+            /* 7. Ensure sticky header works on body scroll */
+            header { position: sticky; top: 0; z-index: 100; }
         }
 
         /* --- PROFESSIONAL PRINT CSS --- */
@@ -349,13 +389,14 @@
         <a class="nav-link" onclick="switchView('products')"><i class="material-icons">inventory_2</i> Products</a>
         <a class="nav-link" onclick="switchView('sales')"><i class="material-icons">receipt_long</i> Sales History</a>
         <a class="nav-link" onclick="switchView('dashboard')"><i class="material-icons">dashboard</i> Dashboard</a>
+        <a class="nav-link" onclick="window.location.reload()"><i class="material-icons">refresh</i> Refresh App</a>
     </nav>
 
     <div class="main-content">
         <header>
             <div class="header-left">
                 <button class="menu-btn" onclick="toggleSidebar()"><i class="material-icons" style="font-size: 28px;">menu</i></button>
-                <h2 class="page-title" id="page-title">Invoice</h2>
+                <h2 class="page-title" id="page-title">New Invoice</h2>
             </div>
             <div class="header-stats" id="headerStats">
                 <div class="stat-item">Qty: <span class="stat-val" id="headQty">0</span></div>
@@ -810,4 +851,3 @@
     </script>
 </body>
 </html>
-
