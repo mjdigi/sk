@@ -27,7 +27,7 @@
             background-color: var(--light-bg);
             display: flex;
             height: 100vh;
-            overflow: hidden;
+            overflow: hidden; /* Normal view: prevent scrolling body */
         }
 
         /* --- SIDEBAR NAVIGATION --- */
@@ -112,7 +112,6 @@
 
         h2.page-title { margin: 0; font-size: 1.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        /* NEW: Header Stats (Total Amount & Qty) */
         .header-stats {
             display: flex;
             gap: 15px;
@@ -183,7 +182,7 @@
 
         .btn-add { background-color: var(--primary-color); color: white; margin-top: 5px; }
         .btn-save { background-color: var(--accent-color); color: white; }
-        /* Updated Button Styles for Header Position */
+        
         .btn-header { 
             padding: 5px 15px; 
             font-size: 0.9rem; 
@@ -249,14 +248,13 @@
         
         .btn-delete { color: var(--danger-color); cursor: pointer; background: none; border: none; font-weight: bold; font-size: 1.1rem; }
 
-        /* --- UPDATED INVOICE HEADER --- */
+        /* --- INVOICE HEADER --- */
         .invoice-header {
             border-bottom: 2px dashed #ddd;
             padding-bottom: 10px;
             margin-bottom: 10px;
         }
         
-        /* Store info + Action Buttons Row */
         .invoice-top-row {
             display: flex;
             justify-content: space-between;
@@ -300,6 +298,7 @@
         
         .placeholder-content { padding: 40px; text-align: center; color: #7f8c8d; width: 100%; }
 
+        /* --- MOBILE VIEW --- */
         @media (max-width: 768px) {
             .sidebar { position: fixed; left: -260px; height: 100%; box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
             .sidebar.active { transform: translateX(260px); }
@@ -309,7 +308,7 @@
             .input-panel, .list-panel { width: 100%; flex: none; min-width: 0; }
             .input-panel { margin-bottom: 20px; }
             .list-panel { min-height: 500px; }
-            .header-stats { display: none; } /* Hide big stats on mobile header if too crowded, or adjust font */
+            .header-stats { display: none; }
             #mobile-stats { display: flex; justify-content: space-between; background: var(--primary-color); color: white; padding: 10px; margin: -15px -15px 10px -15px; border-radius: 8px 8px 0 0; }
         }
         
@@ -317,15 +316,117 @@
             #mobile-stats { display: none; }
         }
 
+        /* --- PRINT STYLES (FIXED) --- */
         @media print {
-            .sidebar, .input-panel, header { display: none; }
-            .container { padding: 0; overflow: visible; display: block; }
-            .list-panel {
-                width: 100%; box-shadow: none; border: none; padding: 0;
+            /* 1. RESET GLOBAL LAYOUT */
+            body, html {
+                height: auto !important;
+                overflow: visible !important;
+                background-color: white !important;
+                display: block !important;
             }
-            .header-actions, .btn-delete, th:last-child, td:last-child { display: none !important; }
-            .invoice-header { border-bottom: 1px solid #000; }
-            body { font-size: 12px; background: white; height: auto; }
+
+            /* 2. HIDE EVERYTHING EXCEPT THE BILL */
+            .sidebar, 
+            header, 
+            .input-panel, 
+            .header-actions, /* Hide Print/Clear buttons */
+            .btn-delete,     /* Hide X button in table */
+            .cam-controls,
+            .btn-cam-toggle,
+            #mobile-stats,
+            .overlay,
+            .menu-btn,
+            #view-products, #view-sales, #view-dashboard /* Hide other views */
+            {
+                display: none !important;
+            }
+
+            /* 3. FIX MAIN CONTAINERS FOR PRINT */
+            .main-content {
+                margin: 0 !important;
+                padding: 0 !important;
+                height: auto !important;
+                width: 100% !important;
+                overflow: visible !important;
+                display: block !important;
+            }
+
+            .container {
+                padding: 0 !important;
+                margin: 0 !important;
+                height: auto !important;
+                display: block !important;
+                overflow: visible !important;
+            }
+
+            .view-section {
+                display: block !important; /* Override flex */
+                height: auto !important;
+                overflow: visible !important;
+            }
+
+            /* 4. STYLE THE INVOICE PANEL */
+            .list-panel {
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                flex: none !important;
+                overflow: visible !important;
+                height: auto !important;
+                border: none !important;
+            }
+
+            /* 5. TABLE FIXES */
+            .table-wrapper {
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            table {
+                width: 100% !important;
+                border: 1px solid #ccc; /* Add border for print clarity */
+            }
+            
+            th {
+                background-color: #eee !important;
+                color: black !important;
+                position: static !important; /* Remove sticky */
+                border: 1px solid #ccc !important;
+                -webkit-print-color-adjust: exact; 
+            }
+
+            td {
+                border: 1px solid #ccc !important;
+                color: black !important;
+            }
+
+            /* Hide Action Column (last column) */
+            th:last-child, td:last-child {
+                display: none !important;
+            }
+
+            /* 6. INVOICE ELEMENTS */
+            .invoice-header {
+                border-bottom: 2px solid black !important;
+                margin-bottom: 15px !important;
+            }
+            
+            .invoice-meta {
+                background: none !important;
+                border: 1px solid #ccc;
+            }
+
+            .invoice-footer {
+                border-top: 2px solid black !important;
+                color: black !important;
+            }
+            
+            .total-row {
+                color: black !important;
+            }
         }
     </style>
 </head>
