@@ -97,6 +97,7 @@
             align-items: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             flex-shrink: 0;
+            height: 60px;
         }
 
         .header-left { display: flex; align-items: center; gap: 15px; }
@@ -121,6 +122,7 @@
             padding: 5px 15px;
             border-radius: 20px;
             font-size: 0.95rem;
+            white-space: nowrap;
         }
         .stat-item { display: flex; align-items: center; gap: 5px; }
         .stat-val { font-weight: bold; color: #f1c40f; font-size: 1.1rem; }
@@ -308,125 +310,39 @@
             .input-panel, .list-panel { width: 100%; flex: none; min-width: 0; }
             .input-panel { margin-bottom: 20px; }
             .list-panel { min-height: 500px; }
-            .header-stats { display: none; }
-            #mobile-stats { display: flex; justify-content: space-between; background: var(--primary-color); color: white; padding: 10px; margin: -15px -15px 10px -15px; border-radius: 8px 8px 0 0; }
+            
+            /* SHOW HEADER STATS ON MOBILE */
+            .header-stats {
+                padding: 5px 10px;
+                font-size: 0.8rem;
+                display: flex !important; /* Force visible */
+            }
+            .header-stats .stat-val { font-size: 0.9rem; }
+            .header-left { gap: 10px; }
+            
+            /* ADJUST TITLE TO FIT */
+            h2.page-title {
+                font-size: 1rem;
+                max-width: 90px;
+                overflow: hidden;
+            }
         }
         
-        @media (min-width: 769px) {
-            #mobile-stats { display: none; }
-        }
-
-        /* --- PRINT STYLES (FIXED) --- */
+        /* --- PRINT STYLES --- */
         @media print {
-            /* 1. RESET GLOBAL LAYOUT */
-            body, html {
-                height: auto !important;
-                overflow: visible !important;
-                background-color: white !important;
-                display: block !important;
-            }
-
-            /* 2. HIDE EVERYTHING EXCEPT THE BILL */
-            .sidebar, 
-            header, 
-            .input-panel, 
-            .header-actions, /* Hide Print/Clear buttons */
-            .btn-delete,     /* Hide X button in table */
-            .cam-controls,
-            .btn-cam-toggle,
-            #mobile-stats,
-            .overlay,
-            .menu-btn,
-            #view-products, #view-sales, #view-dashboard /* Hide other views */
-            {
-                display: none !important;
-            }
-
-            /* 3. FIX MAIN CONTAINERS FOR PRINT */
-            .main-content {
-                margin: 0 !important;
-                padding: 0 !important;
-                height: auto !important;
-                width: 100% !important;
-                overflow: visible !important;
-                display: block !important;
-            }
-
-            .container {
-                padding: 0 !important;
-                margin: 0 !important;
-                height: auto !important;
-                display: block !important;
-                overflow: visible !important;
-            }
-
-            .view-section {
-                display: block !important; /* Override flex */
-                height: auto !important;
-                overflow: visible !important;
-            }
-
-            /* 4. STYLE THE INVOICE PANEL */
-            .list-panel {
-                width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                box-shadow: none !important;
-                border-radius: 0 !important;
-                flex: none !important;
-                overflow: visible !important;
-                height: auto !important;
-                border: none !important;
-            }
-
-            /* 5. TABLE FIXES */
-            .table-wrapper {
-                overflow: visible !important;
-                height: auto !important;
-            }
-
-            table {
-                width: 100% !important;
-                border: 1px solid #ccc; /* Add border for print clarity */
-            }
-            
-            th {
-                background-color: #eee !important;
-                color: black !important;
-                position: static !important; /* Remove sticky */
-                border: 1px solid #ccc !important;
-                -webkit-print-color-adjust: exact; 
-            }
-
-            td {
-                border: 1px solid #ccc !important;
-                color: black !important;
-            }
-
-            /* Hide Action Column (last column) */
-            th:last-child, td:last-child {
-                display: none !important;
-            }
-
-            /* 6. INVOICE ELEMENTS */
-            .invoice-header {
-                border-bottom: 2px solid black !important;
-                margin-bottom: 15px !important;
-            }
-            
-            .invoice-meta {
-                background: none !important;
-                border: 1px solid #ccc;
-            }
-
-            .invoice-footer {
-                border-top: 2px solid black !important;
-                color: black !important;
-            }
-            
-            .total-row {
-                color: black !important;
-            }
+            body * { visibility: hidden; }
+            #view-billing, #view-billing .list-panel, #view-billing .list-panel * { visibility: visible; }
+            #view-billing { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; display: block !important; overflow: visible !important; height: auto !important; background: white; }
+            .list-panel { width: 100% !important; height: auto !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; overflow: visible !important; position: absolute; top: 0; left: 0; background: white; }
+            .input-panel, .header-actions, .menu-btn, .sidebar, header, .overlay, .btn-delete { display: none !important; }
+            .table-wrapper { height: auto !important; overflow: visible !important; display: block !important; }
+            table { width: 100% !important; border-collapse: collapse; border: 2px solid #000; }
+            th, td { color: #000 !important; border: 1px solid #000 !important; padding: 5px !important; font-size: 12px !important; -webkit-print-color-adjust: exact; }
+            th { background-color: #eee !important; }
+            th:last-child, td:last-child { display: none !important; }
+            .invoice-header { border-bottom: 2px solid #000 !important; }
+            .invoice-footer { border-top: 2px solid #000 !important; margin-top: 10px !important; }
+            .total-row { color: #000 !important; }
         }
     </style>
 </head>
@@ -457,7 +373,7 @@
                 <button class="menu-btn" onclick="toggleSidebar()">
                     <i class="material-icons" style="font-size: 28px;">menu</i>
                 </button>
-                <h2 class="page-title" id="page-title">New Invoice</h2>
+                <h2 class="page-title" id="page-title">Invoice</h2>
             </div>
             
             <div class="header-stats" id="headerStats">
@@ -470,11 +386,6 @@
         <div id="view-billing" class="view-section active container">
             <div class="input-panel">
                 
-                <div id="mobile-stats">
-                    <span>Qty: <b id="mobQty">0</b></span>
-                    <span>Total: <b id="mobTotal">₹0.00</b></span>
-                </div>
-
                 <div class="section-title">Customer Details</div>
                 <div class="form-group">
                     <label>Customer Name</label>
@@ -668,8 +579,6 @@
         // Header Stats Elements
         const headQty = document.getElementById('headQty');
         const headTotal = document.getElementById('headTotal');
-        const mobQty = document.getElementById('mobQty');
-        const mobTotal = document.getElementById('mobTotal');
 
         const custNameInput = document.getElementById('custName');
         const custPhoneInput = document.getElementById('custPhone');
@@ -890,11 +799,9 @@
             const formattedTotal = `₹${finalTotal.toFixed(2)}`;
             grandTotalEl.innerText = formattedTotal;
             
-            // Update Header Stats
+            // Update Header Stats (Only these exist now)
             headQty.innerText = totalQty;
             headTotal.innerText = formattedTotal;
-            mobQty.innerText = totalQty;
-            mobTotal.innerText = formattedTotal;
 
             window.deleteItem = (idx) => { currentBill.splice(idx, 1); renderBill(); };
         }
@@ -919,7 +826,6 @@
             set(push(ref(db, 'bills')), billData)
                 .then(() => { 
                     window.print(); 
-                    window.resetSystem(); 
                 })
                 .finally(() => { btn.innerHTML = '<i class="material-icons" style="font-size:1.2rem; vertical-align:middle;">print</i> Print'; });
         });
