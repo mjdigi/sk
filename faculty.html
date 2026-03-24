@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Portal - Academic Management</title>
+    <link rel="stylesheet" href="faculty.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-layer-group"></i>
+                <h2>Faculty Portal</h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-target="faculty-dash"><i class="fas fa-th-large"></i> Dashboard</li>
+                <li data-target="mark-attendance"><i class="fas fa-user-check"></i> Mark Attendance</li>
+                <li data-target="attendance-reports"><i class="fas fa-chart-pie"></i> Attendance Reports</li>
+                <li data-target="internal-marks"><i class="fas fa-edit"></i> Internal Marks</li>
+                <li data-target="faculty-timetable"><i class="fas fa-calendar-alt"></i> Schedule</li>
+            </ul>
+            <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-header">
+                <h1 id="pageTitle">Faculty Dashboard</h1>
+                <div id="facultyName" class="user-info"><i class="fas fa-user-circle"></i> Loading...</div>
+            </header>
+
+            <section id="faculty-dash" class="content-section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Classes Handled</h3>
+                        <p id="totalClasses">0</p>
+                    </div>
+                    <div class="stat-card" style="border-bottom-color: #3b82f6;">
+                        <h3>Today's Status</h3>
+                        <p id="todayAttStatus">Pending</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="mark-attendance" class="content-section" style="padding: 25px 40px;">
+                
+                <div id="attendanceHistoryView">
+                    <div class="card full-width">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                            <h3>Attendance Records</h3>
+                            <button id="showAddAttBtn" class="btn-primary" style="padding: 10px 20px; font-size: 14px;">
+                                <i class="fas fa-plus"></i> Record Daily Attendance
+                            </button>
+                        </div>
+                        
+                        <div class="filter-row">
+                            <div class="search-box" style="flex: 1.5;">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="searchAttHistory" placeholder="Search by class or subject...">
+                            </div>
+                            <select id="filterAttYear">
+                                <option value="">All Years</option>
+                                <option value="1 year">1st Year</option>
+                                <option value="2 year">2nd Year</option>
+                            </select>
+                            <select id="filterAttClass">
+                                <option value="">All Classes</option>
+                                <option value="MCA">MCA</option>
+                                <option value="DA">DA</option>
+                                <option value="CYBER">CYBER</option>
+                            </select>
+                            <select id="filterAttBatch" style="display: none;">
+                                <option value="all">All Batches</option>
+                                <option value="1">Batch 1</option>
+                                <option value="2">Batch 2</option>
+                            </select>
+                            
+                            <select id="filterAttSubject">
+                                <option value="">All Subjects</option>
+                            </select>
+                            <input type="date" id="filterAttDate">
+                            <button id="applyAttFiltersBtn" class="btn-secondary" style="margin: 0;">
+                                <i class="fas fa-filter"></i> Filter
+                            </button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date/Time</th>
+                                        <th>Period</th>
+                                        <th>Class & Year</th>
+                                        <th>Subject</th>
+                                        <th>Hours</th>
+                                        <th>Status <small>(P/A/OD/Total)</small></th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="attendanceHistoryList">
+                                    <tr><td colspan="7" style="text-align: center; color: #94a3b8;">Loading existing records...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="attendanceRecordView" style="display: none;">
+                    <div class="card full-width">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px;">
+                            <button id="backToHistoryBtn" class="btn-secondary" style="padding: 8px 15px; border-radius: 8px;">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                            <h3 style="margin: 0; font-size: 20px;">Record Daily Attendance</h3>
+                        </div>
+
+                        <div class="filter-row">
+                            <select id="attYear">
+                                <option value="">Select Year</option>
+                                <option value="1 year">1st Year</option>
+                                <option value="2 year">2nd Year</option>
+                            </select>
+                            <select id="attClass">
+                                <option value="">Select Class</option>
+                                <option value="MCA">MCA</option>
+                                <option value="DA">DA</option>
+                                <option value="CYBER">CYBER</option>
+                            </select>
+                            <select id="attBatch" style="display: none;">
+                                <option value="1">Batch 1</option>
+                                <option value="2">Batch 2</option>
+                            </select>
+
+                            <select id="attSubject">
+                                <option value="">Select Subject</option>
+                            </select>
+                            
+                            <select id="attPeriod">
+                                <option value="">Period</option>
+                                <option value="P1">P1</option>
+                                <option value="P2">P2</option>
+                                <option value="P3">P3</option>
+                                <option value="P4">P4</option>
+                                <option value="P5">P5</option>
+                                <option value="P6">P6</option>
+                            </select>
+
+                            <input type="date" id="attDate" title="Select Date">
+                            <input type="number" id="attHours" min="1" max="6" placeholder="Hours (1-6)" title="Hours Conducted (1 to 6)">
+                            
+                            <button id="loadStudentsBtn" class="btn-secondary">
+                                <span class="btn-text"><i class="fas fa-users"></i> Load Students</span>
+                                <span class="code-loader"><i class="fas fa-code"></i> &lt;Querying.../&gt;</span>
+                            </button>
+                        </div>
+
+                        <div id="liveSummaryCard" class="live-summary-card" style="display: none;">
+                            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                                <div class="summary-item">
+                                    <span>Date & Time</span>
+                                    <span id="sumDate">-</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Class Info</span>
+                                    <span id="sumClass">-</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Subject (Period)</span>
+                                    <span id="sumSubject">-</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Hours</span>
+                                    <span id="sumHours">-</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <div class="summary-pill pill-p">
+                                    <i class="fas fa-check-circle"></i> Present: <span id="countP">0</span>
+                                </div>
+                                <div class="summary-pill pill-a">
+                                    <i class="fas fa-times-circle"></i> Absent: <span id="countA">0</span>
+                                </div>
+                                <div class="summary-pill pill-o">
+                                    <i class="fas fa-briefcase"></i> OD: <span id="countO">0</span>
+                                </div>
+                                <div class="summary-pill pill-t">
+                                    <i class="fas fa-users"></i> Total: <span id="countT">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <table class="data-table" id="attendanceTableContainer" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>Roll No</th>
+                                    <th>Student Name</th>
+                                    <th>Attendance Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceList">
+                            </tbody>
+                        </table>
+                        
+                        <button id="saveAttendanceBtn" class="btn-primary" style="margin-top: 25px; display: none; width: 100%; max-width: 300px;">
+                            <span class="btn-text"><i class="fas fa-save"></i> Save Attendance</span>
+                            <span class="code-loader"><i class="fas fa-code"></i> &lt;Pushing.../&gt;</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="attendance-reports" class="content-section">
+                <div class="card full-width">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h3><i class="fas fa-chart-pie" style="color:#10b981;"></i> Comprehensive Attendance Reports</h3>
+                        <button id="refreshReportsBtn" class="btn-secondary"><i class="fas fa-sync-alt"></i> Refresh Data</button>
+                    </div>
+                    
+                    <div class="report-level">
+                        <h4><i class="fas fa-calendar-alt"></i> Select Year</h4>
+                        <div class="report-cards" id="rc-year">
+                            <div class="report-card active" data-val="all">All Years</div>
+                            <div class="report-card" data-val="1 year">1st Year</div>
+                            <div class="report-card" data-val="2 year">2nd Year</div>
+                        </div>
+                    </div>
+
+                    <div class="report-level">
+                        <h4><i class="fas fa-chalkboard"></i> Select Class</h4>
+                        <div class="report-cards" id="rc-class">
+                            <div class="report-card active" data-val="all">All Classes</div>
+                            <div class="report-card" data-val="MCA">MCA</div>
+                            <div class="report-card" data-val="DA">DA</div>
+                            <div class="report-card" data-val="CYBER">CYBER</div>
+                        </div>
+                    </div>
+
+                    <div class="report-level" id="level-batch" style="display: none;">
+                        <h4><i class="fas fa-layer-group"></i> Select Batch</h4>
+                        <div class="report-cards" id="rc-batch">
+                            <div class="report-card active" data-val="all">All Batches</div>
+                            <div class="report-card" data-val="1">Batch 1</div>
+                            <div class="report-card" data-val="2">Batch 2</div>
+                        </div>
+                    </div>
+
+                    <div class="report-level">
+                        <h4><i class="fas fa-book"></i> Select Subject</h4>
+                        <div class="report-cards" id="rc-subject">
+                            <div class="report-card active" data-val="all">All My Subjects</div>
+                            </div>
+                    </div>
+
+                    <div class="report-level">
+                        <h4><i class="fas fa-shield-alt"></i> Select Eligibility Status</h4>
+                        <div class="report-cards" id="rc-eligibility">
+                            <div class="report-card active" data-val="all">All Statuses</div>
+                            <div class="report-card" data-val="Eligible">Eligible (>= 75%)</div>
+                            <div class="report-card" data-val="Condonation">Condonation (65% - 74%)</div>
+                            <div class="report-card" data-val="Not Eligible">Not Eligible (&lt; 65%)</div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive" style="margin-top: 30px;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Roll No</th>
+                                    <th>Student Name</th>
+                                    <th>Subject</th>
+                                    <th>Status <small>(P/A/OD/Total)</small></th>
+                                    <th>Percentage</th>
+                                    <th>Eligibility Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceReportList">
+                                <tr><td colspan="6" style="text-align:center; color:#94a3b8;">Loading data...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="internal-marks" class="content-section">
+                <div class="card">
+                    <h3 style="margin-bottom: 20px;">Enter Internal Marks</h3>
+                    <div class="filter-row">
+                        <select id="marksClass"><option value="">Select Class</option></select>
+                        <select id="marksType">
+                            <option value="Unit Test 1">Unit Test 1</option>
+                            <option value="Unit Test 2">Unit Test 2</option>
+                            <option value="Assignment">Assignment</option>
+                        </select>
+                        <button id="loadMarksBtn" class="btn-secondary">
+                            <span class="btn-text"><i class="fas fa-file-alt"></i> Load Marksheet</span>
+                            <span class="code-loader"><i class="fas fa-code"></i> &lt;Querying.../&gt;</span>
+                        </button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Max Score</th>
+                                <th>Obtained Score</th>
+                            </tr>
+                        </thead>
+                        <tbody id="marksEntryList">
+                            <tr><td colspan="3" style="text-align: center; color: #94a3b8;">Select a class to load marksheet.</td></tr>
+                        </tbody>
+                    </table>
+                    <button id="saveMarksBtn" class="btn-primary" style="margin-top: 25px; display: none; width: 100%; max-width: 300px;">
+                        <span class="btn-text"><i class="fas fa-save"></i> Save Marks</span>
+                        <span class="code-loader"><i class="fas fa-code"></i> &lt;Pushing.../&gt;</span>
+                    </button>
+                </div>
+            </section>
+
+            <section id="faculty-timetable" class="content-section">
+                <div class="card full-width">
+                    <h3>My Weekly Schedule</h3>
+                    <p style="color: #64748b; margin-top: 5px; margin-bottom: 20px; font-size: 14px;">Classes mapped to your assigned subjects.</p>
+                    
+                    <div class="table-responsive">
+                        <table class="data-table timetable-table">
+                            <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>P1 <small>(10:00 - 11:00)</small></th>
+                                    <th>P2 <small>(11:00 - 12:00)</small></th>
+                                    <th>P3 <small>(12:00 - 01:00)</small></th>
+                                    <th>P4 <small>(02:00 - 03:00)</small></th>
+                                    <th>P5 <small>(03:00 - 04:00)</small></th>
+                                    <th>P6 <small>(04:00 - 05:00)</small></th>
+                                </tr>
+                            </thead>
+                            <tbody id="facultyTimetableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toastContainer"></div>
+
+    <script type="module" src="faculty.js"></script>
+</body>
+</html>

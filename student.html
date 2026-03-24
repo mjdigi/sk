@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - Dashboard</title>
+    <link rel="stylesheet" href="student.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-user-graduate" style="font-size: 28px; color: #8b5cf6;"></i>
+                <h2>Student Portal</h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-target="dashboard-section"><i class="fas fa-th-large"></i> Dashboard</li>
+                <li data-target="attendance-section"><i class="fas fa-calendar-check"></i> My Attendance</li>
+                <li data-target="marks-section"><i class="fas fa-chart-bar"></i> My Marks</li>
+                <li data-target="activities-section"><i class="fas fa-running"></i> Activities</li>
+                <li data-target="achievement-section"><i class="fas fa-trophy"></i> Add Achievement</li>
+                <li data-target="timetable-section"><i class="fas fa-clock"></i> Time Table</li>
+            </ul>
+            <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-header">
+                <h1 id="pageTitle">Overview</h1>
+                <div class="user-profile">
+                    <i class="fas fa-user-circle" style="font-size: 20px;"></i>
+                    <span id="welcomeMessage">Loading...</span>
+                </div>
+            </header>
+
+            <section id="dashboard-section" class="content-section active">
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <h3><i class="fas fa-clipboard-check"></i> Overall Attendance</h3>
+                        <p id="dashAttendance">--%</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-medal"></i> Total Achievements</h3>
+                        <p id="dashAchievements">--</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-chalkboard-teacher"></i> Live Schedule</h3>
+                        <div id="dashUpcomingClass" class="upcoming-class-info">
+                            <h4>Loading...</h4>
+                            <p>Fetching timetable status...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="attendance-section" class="content-section">
+                <div class="card full-width">
+                    <h3 style="margin-bottom: 20px;">Attendance Records</h3>
+                    <div class="summary-bar">
+                        <span class="badge" id="attTotal"><i class="fas fa-calendar-day"></i> Total Sessions: 0</span>
+                        <span class="badge success" id="attPresent"><i class="fas fa-check-circle"></i> Present: 0</span>
+                        <span class="badge danger" id="attAbsent"><i class="fas fa-times-circle"></i> Absent: 0</span>
+                        <span class="badge warning" id="attOd"><i class="fas fa-briefcase"></i> OD: 0</span>
+                        <span class="badge" style="background:#1e293b; color:white; border:none;" id="attEligibility"><i class="fas fa-exclamation-circle"></i> Eligibility: --</span>
+                    </div>
+
+                    <h4 style="margin-bottom: 15px; color: #475569; font-size: 16px;">Subject-wise Attendance</h4>
+                    <div id="subjectAttendanceCards" class="dashboard-cards" style="margin-bottom: 30px;">
+                        </div>
+
+                    <h4 style="margin-bottom: 15px; color: #475569; font-size: 16px;">Detailed Session Logs</h4>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Period</th>
+                                    <th>Subject</th>
+                                    <th>Hours</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceTableBody">
+                                <tr><td colspan="5" style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Fetching attendance...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="marks-section" class="content-section">
+                <div class="card full-width">
+                    <h3 style="margin-bottom: 20px;">Academic Marks</h3>
+                    <div class="filter-group">
+                        <select id="marksTypeFilter">
+                            <option value="all">All Assessments</option>
+                            <option value="Unit Test 1">Unit Test 1</option>
+                            <option value="Unit Test 2">Unit Test 2</option>
+                            <option value="Assignment">Assignment</option>
+                            <option value="Internal">Internal</option>
+                        </select>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Assessment Type</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+                        <tbody id="marksTableBody">
+                            <tr><td colspan="3" style="text-align: center; color: #94a3b8;">Loading academic performance...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="activities-section" class="content-section">
+                <div class="card full-width">
+                    <h3 style="margin-bottom: 20px;">Extracurricular & Co-curricular Activities</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Title</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activitiesTableBody">
+                            <tr><td colspan="3" style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Fetching activities...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="achievement-section" class="content-section">
+                <div class="card form-card">
+                    <h3 style="margin-bottom: 25px;"><i class="fas fa-cloud-upload-alt" style="color: #8b5cf6;"></i> Submit New Achievement</h3>
+                    <form id="achievementForm">
+                        <div class="input-group">
+                            <label>Title of Achievement</label>
+                            <input type="text" id="achvTitle" required placeholder="e.g., 1st Prize in Hackathon">
+                        </div>
+                        <div class="input-group">
+                            <label>Category</label>
+                            <select id="achvCategory" required>
+                                <option value="Sports">Sports</option>
+                                <option value="Cultural">Cultural</option>
+                                <option value="Technical">Technical / Academic</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Date of Event</label>
+                            <input type="date" id="achvDate" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Certificate Upload (PDF/Image)</label>
+                            <input type="file" id="achvFile" accept=".pdf, image/*" required style="background: white;">
+                        </div>
+                        <button type="submit" id="submitAchvBtn" class="btn-primary">
+                            <span class="btn-text"><i class="fas fa-paper-plane"></i> Submit Achievement</span>
+                            <span class="code-loader"><i class="fas fa-code"></i> &lt;Uploading.../&gt;</span>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="timetable-section" class="content-section">
+                <div class="card full-width">
+                    <h3 style="margin-bottom: 10px;">My Class Time Table</h3>
+                    <p id="ttClassNameDisplay" style="margin-bottom: 25px; color: #8b5cf6; font-weight: 600; background: rgba(139, 92, 246, 0.1); display: inline-block; padding: 6px 12px; border-radius: 8px;">Loading class schedule...</p>
+                    
+                    <div class="table-responsive">
+                        <table class="data-table timetable-table">
+                            <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>Period 1<br><small>10:00 - 11:00</small></th>
+                                    <th>Period 2<br><small>11:00 - 12:00</small></th>
+                                    <th>Period 3<br><small>12:00 - 01:00</small></th>
+                                    <th>Period 4<br><small>02:00 - 03:00</small></th>
+                                    <th>Period 5<br><small>03:00 - 04:00</small></th>
+                                    <th>Period 6<br><small>04:00 - 05:00</small></th>
+                                </tr>
+                            </thead>
+                            <tbody id="timetableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <div id="toastContainer"></div>
+
+    <script type="module" src="student.js"></script>
+</body>
+</html>

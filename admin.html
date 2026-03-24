@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Admin Control Panel</title>
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-layer-group"></i>
+                <h2>Admin Portal</h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-target="admin-dash"><i class="fas fa-th-large"></i> Dashboard</li>
+                <li data-target="manage-users"><i class="fas fa-user-shield"></i> Manage Users</li>
+                
+                <li data-target="attendance-reports"><i class="fas fa-chart-line"></i> Attendance Reports</li>
+                
+                <li data-target="academic-structure"><i class="fas fa-calendar-alt"></i> Academic Structure</li>
+                <li data-target="system-reports"><i class="fas fa-file-invoice"></i> Reports</li>
+            </ul>
+            <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-header">
+                <h1 id="pageTitle">System Overview</h1>
+                <div id="adminName" class="user-info"><i class="fas fa-user-circle"></i> Administrator</div>
+            </header>
+
+            <section id="admin-dash" class="content-section active">
+                <div class="stats-grid">
+                    <div class="stat-card blue">
+                        <i class="fas fa-user-graduate"></i>
+                        <div class="stat-info">
+                            <h3 id="countStudents">0</h3>
+                            <p>Total Students</p>
+                        </div>
+                    </div>
+                    <div class="stat-card green">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <div class="stat-info">
+                            <h3 id="countFaculty">0</h3>
+                            <p>Faculty Members</p>
+                        </div>
+                    </div>
+                    <div class="stat-card orange">
+                        <i class="fas fa-door-open"></i>
+                        <div class="stat-info">
+                            <h3 id="countClasses">0</h3>
+                            <p>Active Classes</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="manage-users" class="content-section">
+                <div class="card full-width">
+                    <div class="table-controls">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="userSearch" placeholder="Search users by name or email...">
+                        </div>
+                        
+                        <div class="filter-box">
+                            <select id="roleFilter">
+                                <option value="all">All Roles</option>
+                                <option value="student">Students</option>
+                                <option value="faculty">Faculty</option>
+                                <option value="admin">Admins</option>
+                            </select>
+                            <select id="yearFilter">
+                                <option value="all">All Years</option>
+                                <option value="1 year">1st Year</option>
+                                <option value="2 year">2nd Year</option>
+                            </select>
+                            <select id="classFilter">
+                                <option value="all">All Classes</option>
+                                <option value="MCA">MCA</option>
+                                <option value="DA">DA</option>
+                                <option value="CYBER">CYBER</option>
+                            </select>
+                            <select id="batchFilter" style="display: none;">
+                                <option value="all">All Batches</option>
+                                <option value="1">Batch 1</option>
+                                <option value="2">Batch 2</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-end;">
+                        <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
+                        <button id="importCsvBtn" class="btn-secondary" title="Required: Role,Name,Email,DOB,Class,Year,Batch,Subject,StaffId,RollNo">
+                            <span class="btn-text"><i class="fas fa-file-import"></i> Import CSV</span>
+                            <span class="code-loader"><i class="fas fa-code"></i> &lt;Parsing.../&gt;</span>
+                        </button>
+                        <button id="exportCsvBtn" class="btn-secondary">
+                            <span class="btn-text"><i class="fas fa-file-export"></i> Export CSV</span>
+                        </button>
+                        <button id="showAddUserBtn" class="btn-primary-sm">
+                            <i class="fas fa-plus-circle"></i> Add New User
+                        </button>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name & Role</th>
+                                <th>Class Info</th>
+                                <th>Year</th>
+                                <th>Subject/Dept</th>
+                                <th>Email Address</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="attendance-reports" class="content-section">
+                <div class="card full-width">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h3><i class="fas fa-chart-pie" style="color:#3b82f6;"></i> Comprehensive Attendance Reports</h3>
+                        <button id="refreshReportsBtn" class="btn-secondary"><i class="fas fa-sync-alt"></i> Refresh Data</button>
+                    </div>
+                    
+                    <div class="report-level">
+                        <h4><i class="fas fa-calendar-alt"></i> Select Year</h4>
+                        <div class="report-cards" id="rc-year">
+                            <div class="report-card active" data-val="all">All Years</div>
+                            <div class="report-card" data-val="1 year">1st Year</div>
+                            <div class="report-card" data-val="2 year">2nd Year</div>
+                        </div>
+                    </div>
+
+                    <div class="report-level">
+                        <h4><i class="fas fa-chalkboard"></i> Select Class</h4>
+                        <div class="report-cards" id="rc-class">
+                            <div class="report-card active" data-val="all">All Classes</div>
+                            <div class="report-card" data-val="MCA">MCA</div>
+                            <div class="report-card" data-val="DA">DA</div>
+                            <div class="report-card" data-val="CYBER">CYBER</div>
+                        </div>
+                    </div>
+
+                    <div class="report-level" id="level-batch" style="display: none;">
+                        <h4><i class="fas fa-layer-group"></i> Select Batch</h4>
+                        <div class="report-cards" id="rc-batch">
+                            <div class="report-card active" data-val="all">All Batches</div>
+                            <div class="report-card" data-val="1">Batch 1</div>
+                            <div class="report-card" data-val="2">Batch 2</div>
+                        </div>
+                    </div>
+
+                    <div class="report-level">
+                        <h4><i class="fas fa-book"></i> Select Subject</h4>
+                        <div class="report-cards" id="rc-subject">
+                            <div class="report-card active" data-val="all">All Subjects</div>
+                        </div>
+                    </div>
+
+                    <div class="report-level">
+                        <h4><i class="fas fa-shield-alt"></i> Select Eligibility Status</h4>
+                        <div class="report-cards" id="rc-eligibility">
+                            <div class="report-card active" data-val="all">All Statuses</div>
+                            <div class="report-card" data-val="Eligible">Eligible (>= 75%)</div>
+                            <div class="report-card" data-val="Condonation">Condonation (65% - 74%)</div>
+                            <div class="report-card" data-val="Not Eligible">Not Eligible (&lt; 65%)</div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive" style="margin-top: 30px;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Roll No</th>
+                                    <th>Student Name</th>
+                                    <th>Subject</th>
+                                    <th>Status <small>(P/A/OD/Total)</small></th>
+                                    <th>Percentage</th>
+                                    <th>Eligibility Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceReportList">
+                                <tr><td colspan="6" style="text-align:center; color:#94a3b8;">Loading data...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="academic-structure" class="content-section">
+                <div class="card full-width">
+                    <h3 style="margin-bottom: 20px;">Manage Class Timetables</h3>
+                    <div class="filter-row">
+                        <select id="ttYear" style="flex-grow: 1;">
+                            <option value="">Select Academic Year</option>
+                            <option value="1 year">1st Year</option>
+                            <option value="2 year">2nd Year</option>
+                        </select>
+                        <select id="ttClass" style="flex-grow: 1;">
+                            <option value="">Select Class Section</option>
+                            <option value="MCA">MCA</option>
+                            <option value="DA">DA</option>
+                            <option value="CYBER">CYBER</option>
+                        </select>
+                        
+                        <div id="ttBatchContainer" style="display: none; align-items: center; gap: 12px; background: white; padding: 0 15px; border: 1px solid #e2e8f0; border-radius: 10px; height: 46px;">
+                            <span style="font-size: 14px; font-weight: 500; color: #475569;"><i class="fas fa-layer-group"></i> Batch:</span>
+                            <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500;"><input type="radio" name="ttBatch" value="1" checked> 1</label>
+                            <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500;"><input type="radio" name="ttBatch" value="2"> 2</label>
+                        </div>
+
+                        <button id="loadTtBtn" class="btn-secondary" style="margin:0; height:46px;">
+                            <span class="btn-text"><i class="fas fa-download"></i> Load Schedule</span>
+                            <span class="code-loader"><i class="fas fa-code"></i> &lt;Fetching/&gt;</span>
+                        </button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="data-table timetable-table">
+                            <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>P1 <small>(10:00 - 11:00)</small></th>
+                                    <th>P2 <small>(11:00 - 12:00)</small></th>
+                                    <th>P3 <small>(12:00 - 01:00)</small></th>
+                                    <th>P4 <small>(02:00 - 03:00)</small></th>
+                                    <th>P5 <small>(03:00 - 04:00)</small></th>
+                                    <th>P6 <small>(04:00 - 05:00)</small></th>
+                                    <th style="background-color: #f1f5f9; color: #3b82f6;"><i class="fas fa-sync"></i> Weekend Sub</th>
+                                </tr>
+                            </thead>
+                            <tbody id="timetableBody"></tbody>
+                        </table>
+                    </div>
+                    <button id="saveTtBtn" class="btn-primary" style="margin-top: 25px; max-width: 250px;">
+                        <span class="btn-text"><i class="fas fa-save"></i> Save Timetable</span>
+                        <span class="code-loader"><i class="fas fa-code"></i> &lt;Compiling.../&gt;</span>
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="addUserOverlay" class="form-overlay" style="display: none;">
+        <div class="card form-card">
+            <div class="form-header">
+                <h3>Initialize New User</h3>
+                <button id="closeFormBtn" class="close-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="userForm">
+                <div class="input-group">
+                    <label>Assign System Role</label>
+                    <select id="userRole" required>
+                        <option value="student">Student</option>
+                        <option value="faculty">Faculty</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="userName" required placeholder="e.g. John Doe">
+                </div>
+                <div id="studentFields">
+                    <div class="input-group">
+                        <label>Roll Number</label>
+                        <input type="text" id="studentRoll" placeholder="e.g. 2024MCA01">
+                    </div>
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                        <div class="input-group" style="flex:1; min-width: 120px;">
+                            <label>Class</label>
+                            <select id="studentClassSelect">
+                                <option value="MCA">MCA</option>
+                                <option value="DA">DA</option>
+                                <option value="CYBER">CYBER</option>
+                            </select>
+                        </div>
+                        <div class="input-group" id="studentBatchGroup" style="flex:1; min-width: 120px;">
+                            <label>Batch</label>
+                            <select id="studentBatchSelect">
+                                <option value="1">Batch 1</option>
+                                <option value="2">Batch 2</option>
+                            </select>
+                        </div>
+                        <div class="input-group" style="flex:1; min-width: 120px;">
+                            <label>Year</label>
+                            <select id="studentYearSelect">
+                                <option value="1 year">1st Year</option>
+                                <option value="2 year">2nd Year</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="facultyFields" style="display: none;">
+                    <div class="input-group">
+                        <label>Staff ID</label>
+                        <input type="text" id="facultyStaffId" placeholder="e.g. FAC-001">
+                    </div>
+                    <div class="input-group">
+                        <label>Subject (comma separated)</label>
+                        <input type="text" id="facultySubject" placeholder="e.g. Java, DBMS">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" id="userEmail" required placeholder="name@domain.edu">
+                </div>
+                <div class="input-group">
+                    <label>DOB (Used as Default Password)</label>
+                    <input type="date" id="userDob" required>
+                </div>
+                <button type="submit" id="submitAddUserBtn" class="btn-primary">
+                    <span class="btn-text">Create Account</span>
+                    <span class="code-loader"><i class="fas fa-code"></i> &lt;Executing.../&gt;</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="editUserOverlay" class="form-overlay" style="display: none;">
+        <div class="card form-card">
+            <div class="form-header">
+                <h3>Edit User Profile</h3>
+                <button id="closeEditFormBtn" class="close-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="editUserForm">
+                <input type="hidden" id="editUserId">
+                <input type="hidden" id="editUserRole">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="editUserName" required>
+                </div>
+                <div id="editStudentFields" style="display: none; flex-wrap: wrap; gap:20px;">
+                    <div class="input-group" style="flex:1; min-width: 120px;">
+                        <label>Class</label>
+                        <select id="editStudentClass">
+                            <option value="MCA">MCA</option>
+                            <option value="DA">DA</option>
+                            <option value="CYBER">CYBER</option>
+                        </select>
+                    </div>
+                    <div class="input-group" id="editStudentBatchGroup" style="display: none; flex:1; min-width: 120px;">
+                        <label>Batch</label>
+                        <select id="editStudentBatch">
+                            <option value="1">Batch 1</option>
+                            <option value="2">Batch 2</option>
+                        </select>
+                    </div>
+                    <div class="input-group" style="flex:1; min-width: 120px;">
+                        <label>Year</label>
+                        <select id="editStudentYear">
+                            <option value="1 year">1st Year</option>
+                            <option value="2 year">2nd Year</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="editFacultyFields" style="display: none;">
+                    <div class="input-group">
+                        <label>Subject</label>
+                        <input type="text" id="editFacultySubject">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Email ID (Non-editable)</label>
+                    <input type="email" id="editUserEmail" disabled style="opacity: 0.6; cursor: not-allowed;">
+                </div>
+                <button type="submit" id="submitEditUserBtn" class="btn-primary">
+                    <span class="btn-text">Update User</span>
+                    <span class="code-loader"><i class="fas fa-code"></i> &lt;Pushing.../&gt;</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="confirmOverlay" class="form-overlay" style="display: none;">
+        <div class="card form-card confirm-card">
+            <h3><i class="fas fa-exclamation-circle"></i> Action Required</h3>
+            <p id="confirmMessage">Are you sure you want to proceed with this action?</p>
+            <div class="confirm-actions">
+                <button id="cancelConfirmBtn" class="btn-secondary">Cancel</button>
+                <button id="acceptConfirmBtn" class="btn-danger">
+                    <span class="btn-text">Yes, Delete</span>
+                    <span class="code-loader"><i class="fas fa-code"></i> &lt;Wiping.../&gt;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer"></div>
+
+    <script type="module" src="admin.js"></script>
+</body>
+</html>
